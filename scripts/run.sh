@@ -54,6 +54,7 @@ echo "Checking out ${WORKFLOW_E2E_BRANCH} for ${WORKFLOW_E2E_CHART}"
 git checkout "${WORKFLOW_E2E_BRANCH}"
 helmc fetch "deis/${WORKFLOW_E2E_CHART}"
 helmc generate "${WORKFLOW_E2E_CHART}"
+echo "Installing ${WORKFLOW_E2E_CHART}"
 helmc install "${WORKFLOW_E2E_CHART}" &> /dev/null
 
 # Capture e2e run test output

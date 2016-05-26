@@ -3,6 +3,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . "${DIR}/functions.sh"
 
+export LEASE_RETRIES="${LEASE_RETRIES:-5}"
 export HELM_REMOTE_REPO="${HELM_REMOTE_REPO:-https://github.com/deis/charts.git}"
 export DEIS_CHART_HOME=$HELMC_HOME/cache/deis
 export WORKFLOW_BRANCH="${WORKFLOW_BRANCH:-master}"
