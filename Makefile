@@ -20,3 +20,6 @@ docker-mutable-push:
 
 image:
 	export E2E_RUNNER_IMAGE=${IMAGE}
+
+test:
+	bats tests/
