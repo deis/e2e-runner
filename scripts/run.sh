@@ -66,4 +66,4 @@ retrive-artifacts
 
 #Clean up
 delete_lease
-exit $(( ${podExitCode} + $? ))
+exit ${podExitCode}
