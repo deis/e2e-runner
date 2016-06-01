@@ -1,13 +1,21 @@
 #!/bin/bash
 
 lease() {
-  eval $(k8s-claimer --server=k8s-claimer-e2e.deis.com lease create --duration=$CLUSTER_DURATION)
-  echo "Leased cluster $CLUSTER_NAME for $CLUSTER_DURATION seconds"
-  echo "TOKEN: $TOKEN"
-  if [ -z $TOKEN ]; then
-    echo "Lease failed exiting."
-    exit 1
-  fi
+  local tries=1
+  while [ -z "$TOKEN" ]; do
+    eval $(k8s-claimer --server=k8s-claimer-e2e.deis.com lease create --duration=$CLUSTER_DURATION)
+    if [ -n "$TOKEN" ]; then
+      echo "Leased cluster $CLUSTER_NAME for $CLUSTER_DURATION seconds"
+      echo "TOKEN: $TOKEN"
+      return 0
+    fi
+
+    if [ ${tries} -eq ${LEASE_RETRIES} ]; then
+      echo "Aquiring lease failed."
+      exit 1
+    fi
+    (( tries += 1 ))
+  done
 }
 
 delete_lease() {
