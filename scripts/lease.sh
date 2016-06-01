@@ -26,5 +26,5 @@ delete_lease() {
   kubectl get namespace | grep test | awk '{print $1}' | xargs kubectl delete namespace &> /dev/null
   echo "Deleting Lease for ${CLUSTER_NAME} -- ${TOKEN}"
   k8s-claimer --server=k8s-claimer-e2e.deis.com lease delete $TOKEN
-  return $?
+  return 0
 }
