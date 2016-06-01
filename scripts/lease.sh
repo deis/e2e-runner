@@ -10,8 +10,10 @@ lease() {
   fi
 }
 
+# Uninstall deis when we are done and delete lease
 delete_lease() {
-  # Uninstall deis when we are done
+  echo "Gather pod logs before we delete lease"
+  get-pod-logs
   echo "Uninstalling ${WORKFLOW_CHART}"
   kubectl delete namespace "deis" &> /dev/null
   echo "Deleting all test namespaces"
