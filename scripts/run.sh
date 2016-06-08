@@ -60,6 +60,7 @@ helmc install "${WORKFLOW_E2E_CHART}" &> /dev/null
 # Capture e2e run test output
 tail_logs_from_e2e_pod
 podExitCode=$?
+echo "Test pod exited with code:${podExitCode}"
 
 #Collect artifacts
 retrive-artifacts
