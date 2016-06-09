@@ -82,6 +82,6 @@ get-pod-logs() {
   pods=$(kubectl get pods --namespace=deis | sed '1d' | awk '{print $1}')
   while read -r pod; do
     kubectl logs "${pod}" --namespace=deis >> "${DEIS_LOG_DIR}/${pod}.log"
-    kubectl logs "${pod}" -p --namespace=deis >> "${DEIS_LOG_DIR}/${pod}.previous"
+    kubectl logs "${pod}" -p --namespace=deis >> "${DEIS_LOG_DIR}/${pod}-previous.log"
   done <<< "$pods"
 }
