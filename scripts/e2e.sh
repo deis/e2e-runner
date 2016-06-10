@@ -9,11 +9,14 @@ tail_logs_from_e2e_pod() {
 }
 
 retrive-artifacts() {
+  local exitCode=0
   echo "Retrieving junit.xml from the artifacts sidecar container"
   kubectl exec -c artifacts --namespace=deis "${WORKFLOW_E2E_CHART}" -- /bin/sh -c "find /root -name junit*.xml" > "${DEIS_LOG_DIR}/all-junit-files.out"
+  exitCode=$?
   while read -r file || [[ -n "${file}" ]]
   do
     kubectl exec -c artifacts --namespace=deis "${WORKFLOW_E2E_CHART}" cat "${file}" > "${DEIS_LOG_DIR}/$(basename "$file")"
+    (( exitCode += $? ))
   done < "${DEIS_LOG_DIR}/all-junit-files.out"
 }
 

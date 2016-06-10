@@ -64,7 +64,9 @@ echo "Test pod exited with code:${podExitCode}"
 
 #Collect artifacts
 retrive-artifacts
+retrieveArtifactsExitCode=$?
 
 #Clean up
 delete_lease
-exit ${podExitCode}
+
+exit $(( ${podExitCode} + ${retrieveArtifactsExitCode} ))
