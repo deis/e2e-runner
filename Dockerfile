@@ -21,7 +21,7 @@ RUN adduser --system \
 RUN curl -s https://get.helm.sh | bash && \
     mv helmc /usr/bin
 
-RUN curl -Ls https://bintray.com/deis/deisci/download_file?file_path=k8s-claimer-cli_git-8f0ddfd_linux-amd64 \
+RUN curl -Ls https://storage.googleapis.com/k8s-claimer/git-8f0ddfd/k8s-claimer-git-8f0ddfd-linux-amd64 \
       > /usr/bin/k8s-claimer && \
     chmod +x /usr/bin/k8s-claimer
 
