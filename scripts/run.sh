@@ -69,5 +69,5 @@ retrieveArtifactsExitCode=$?
 
 #Clean up
 delete_lease
-exitCode=${podExitCode}+${retrieveArtifactsExitCode}
+exitCode=$(${podExitCode}+${retrieveArtifactsExitCode})
 exit $exitCode
