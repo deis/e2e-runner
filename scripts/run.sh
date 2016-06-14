@@ -65,9 +65,24 @@ echo "Test pod exited with code:${podExitCode}"
 #Collect artifacts
 retrive-artifacts
 retrieveArtifactsExitCode=$?
+echo "Retrieving artifacts exited with code ${retrieveArtifactsExitCode}"
 
 
 #Clean up
 delete_lease
-exitCode=$(${podExitCode}+${retrieveArtifactsExitCode})
-exit $exitCode
+deleteLeaseExitCode=$?
+echo "Deleting lease exited with code ${deleteLeaseExitCode}"
+
+if [ "$retrieveArtifactsExitCode" -ne "0" ]; then
+  exit ${retrieveArtifactsExitCode}
+fi
+
+if [ "$retrieveArtifactsExitCode" -ne "0" ]; then
+  exit ${retrieveArtifactsExitCode}
+fi
+
+if [ "$deleteLeaseExitCode" -ne "0" ]; then
+  exit ${deleteLeaseExitCode}
+fi
+
+exit 0
