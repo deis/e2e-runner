@@ -73,8 +73,8 @@ delete_lease
 deleteLeaseExitCode=$?
 echo "Deleting lease exited with code ${deleteLeaseExitCode}"
 
-if [ "$retrieveArtifactsExitCode" -ne "0" ]; then
-  exit ${retrieveArtifactsExitCode}
+if [ "$podExitCode" -ne "0" ]; then
+  exit ${podExitCode}
 fi
 
 if [ "$retrieveArtifactsExitCode" -ne "0" ]; then
