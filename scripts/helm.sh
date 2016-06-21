@@ -30,5 +30,8 @@ clean_cluster() {
       fi
       echo -n . 1>&2
     done
+  elif [ $? -eq 1 ]; then
+    echo "Cluster already clean."
+    return 0
   fi
 }
