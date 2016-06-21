@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eo pipefail
+
 source ./config.sh
 source ./debug.sh
 source ./deis.sh
