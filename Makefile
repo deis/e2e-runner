@@ -8,7 +8,7 @@ MUTABLE_IMAGE := ${DEIS_REGISTRY}${IMAGE_PREFIX}/${SHORT_NAME}:canary
 
 docker-build:
 	docker build -t ${IMAGE} .
-	docker tag -f ${IMAGE} ${MUTABLE_IMAGE}
+	docker tag ${IMAGE} ${MUTABLE_IMAGE}
 
 docker-push: docker-immutable-push docker-mutable-push
 
