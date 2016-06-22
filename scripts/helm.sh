@@ -8,7 +8,7 @@ clean_cluster() {
     echo "Deis was installed so I'm removing it!"
     kubectl delete namespace "deis" &> /dev/null
 
-    local timeout_secs=180
+    local timeout_secs=${DEFAULT_TIMEOUT_SECS:-180}
     local increment_secs=1
     local waited_time=0
 
