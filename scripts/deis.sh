@@ -31,11 +31,11 @@ wait-for-all-pods() {
     fi
 
     sleep ${increment_secs}
-    (( waited_time += ${increment_secs} ))
+    (( waited_time += increment_secs ))
 
     if [ ${waited_time} -ge ${timeout_secs} ]; then
       echo "Not all pods started."
-      kubectl get pods --namespace="${name}"
+      kubectl get pods --namespace=deis
       delete_lease
       exit 1
     fi
@@ -45,9 +45,8 @@ wait-for-all-pods() {
 }
 
 get-router-ip() {
-  local ip="null"
   command_output="$(kubectl --namespace=deis get svc deis-router -o json | jq -r ".status.loadBalancer.ingress[0].ip")"
-  if [ ! -z ${command_output} ] && [ ${command_output} != "null" ]; then
+  if [ ! -z "${command_output}" ] && [ "${command_output}" != "null" ]; then
     echo "${command_output}"
   fi
 }
@@ -59,14 +58,14 @@ wait-for-router() {
   local command_output
 
   while [ ${waited_time} -lt ${timeout_secs} ]; do
-    local router_ip=get-router-ip
-    command_output="$(curl -sSL -o /dev/null -w '%{http_code}' "http://deis.$(get-router-ip).nip.io/v2/")"
+    url="http://deis.$(get-router-ip).nip.io"
+    command_output="$(curl -sSL -o /dev/null -w '%{http_code}' "${url}/v2/")"
     if [ "${command_output}" == "401" ]; then
       return 0
     fi
 
     sleep ${increment_secs}
-    (( waited_time += ${increment_secs} ))
+    (( waited_time += increment_secs ))
 
     if [ ${waited_time} -ge ${timeout_secs} ]; then
       echo "Endpoint is unresponsive at ${url}"

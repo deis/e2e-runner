@@ -8,7 +8,7 @@ function check-vars {
     actual_tag="${component}_GIT_TAG"
 
     if [ -n "${!actual_sha}" ]; then
-      export "${component}_GIT_TAG"="git-${!actual_sha:0:7}"
+      export "${component}"_GIT_TAG=git-"${!actual_sha:0:7}"
       echo "Setting ${component}_GIT_TAG to ${!actual_tag}"
     fi
   done

@@ -7,7 +7,7 @@ source ./e2e.sh
 source ./helm.sh
 source ./lease.sh
 
-if [ ! -d ${DEIS_LOG_DIR} ]; then
+if [ ! -d "${DEIS_LOG_DIR}" ]; then
   mkdir -p "${DEIS_LOG_DIR}"
 fi
 
@@ -22,9 +22,9 @@ echo "Adding repo ${HELM_REMOTE_REPO}"
 helmc repo add deis "${HELM_REMOTE_REPO}"
 echo "Get helm up to date"
 helmc up
-cd $DEIS_CHART_HOME
+cd "${DEIS_CHART_HOME}" || exit
 echo "Checking out ${WORKFLOW_BRANCH} for ${WORKFLOW_CHART}"
-git checkout $WORKFLOW_BRANCH
+git checkout "${WORKFLOW_BRANCH}"
 helmc fetch "deis/${WORKFLOW_CHART}"
 
 # Clean cluster if needed
@@ -49,7 +49,7 @@ echo "Use http://grafana.$(get-router-ip).nip.io/ to monitor the e2e run"
 
 # Install e2e chart
 echo "Installing workflow-e2e chart ${WORKFLOW_E2E_CHART}"
-cd $DEIS_CHART_HOME
+cd "${DEIS_CHART_HOME}" || exit
 echo "Checking out ${WORKFLOW_E2E_BRANCH} for ${WORKFLOW_E2E_CHART}"
 git checkout "${WORKFLOW_E2E_BRANCH}"
 helmc fetch "deis/${WORKFLOW_E2E_CHART}"
