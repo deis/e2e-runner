@@ -1,6 +1,7 @@
 #!/bin/bash
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# shellcheck source=scripts/functions.sh
 . "${DIR}/functions.sh"
 
 export LEASE_RETRIES="${LEASE_RETRIES:-5}"

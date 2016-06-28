@@ -19,12 +19,12 @@ retrive-artifacts() {
 
 return-pod-exit-code() {
   local name="${1}"
-  command_output="$(kubectl get po "${name}" -a --namespace=deis -o json | jq -r --arg container "tests" '.status.containerStatuses[] | select(.name==$container) | .state.terminated.exitCode')"
+  command_output="$(kubectl get po "${name}" -a --namespace=deis -o json | jq -r --arg container "tests" ".status.containerStatuses[] | select(.name==\$container) | .state.terminated.exitCode")"
 
   if [ "${command_output}" == "null" ]; then
     return 0
   fi
-  return $command_output
+  return "${command_output}"
 }
 
 wait-for-pod-ready() {
@@ -35,15 +35,15 @@ wait-for-pod-ready() {
   local command_output
 
   while [ ${waited_time} -lt ${timeout_secs} ]; do
-    test_container_output="$(kubectl get po "${name}" -a --namespace=deis -o json | jq -r --arg container "tests" '.status.containerStatuses[] | select(.name==$container) | .ready')"
-    artifact_container_output="$(kubectl get po "${name}" -a --namespace=deis -o json | jq -r --arg container "artifacts" '.status.containerStatuses[] | select(.name==$container) | .ready')"
+    test_container_output="$(kubectl get po "${name}" -a --namespace=deis -o json | jq -r --arg container "tests" ".status.containerStatuses[] | select(.name==\$container) | .ready")"
+    artifact_container_output="$(kubectl get po "${name}" -a --namespace=deis -o json | jq -r --arg container "artifacts" ".status.containerStatuses[] | select(.name==\$container) | .ready")"
 
     if [ "${test_container_output}" == "true" ] && [ "${artifact_container_output}" == "true" ]; then
       return 0
     fi
 
     sleep ${increment_secs}
-    (( waited_time += ${increment_secs} ))
+    (( waited_time += increment_secs ))
 
     if [ ${waited_time} -ge ${timeout_secs} ]; then
       echo
