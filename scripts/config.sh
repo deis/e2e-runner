@@ -30,6 +30,7 @@ components=(
   "SLUGBUILDER"
   "SLUGRUNNER"
   "WORKFLOW_E2E"
+  "WORKFLOW_CLI"
 )
 
 check-vars "${components[@]}"
