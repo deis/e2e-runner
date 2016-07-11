@@ -7,8 +7,9 @@ IMAGE := ${DEIS_REGISTRY}${IMAGE_PREFIX}/${SHORT_NAME}:${VERSION}
 MUTABLE_IMAGE := ${DEIS_REGISTRY}${IMAGE_PREFIX}/${SHORT_NAME}:canary
 
 BATS_CMD := bats --tap tests
+SHELLCHECK_CMD := shellcheck -e SC1091 -e SC2002 scripts/*
 # -e SC1091 exempts `source relative/path/to/file` errors
-SHELLCHECK_CMD := shellcheck -e SC1091 scripts/*
+# -e SC2002 exempts `Useless cat. Consider 'cmd < file | ..' or 'cmd file | ..' instead.``
 TEST_ENV_PREFIX := docker run --rm -v ${CURDIR}:/bash -w /bash quay.io/deis/shell-dev
 
 docker-build:
