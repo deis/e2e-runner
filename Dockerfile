@@ -1,6 +1,6 @@
 FROM quay.io/deis/base:0.2.0
 
-ENV CLUSTER_DURATION=800
+ENV CLUSTER_DURATION=1600
 ENV KUBECONFIG=/home/jenkins/kubeconfig.yaml
 ENV GINKGO_NODES=30
 ENV HELMC_HOME=/home/jenkins/.helmc
