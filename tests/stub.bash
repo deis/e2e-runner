@@ -9,13 +9,13 @@ stub() {
   main="${2}"
   exit_code="${3}"
 
-  stub_template=$(cat <<EOF
+  stub_template="\
     #!/bin/bash
     set -eo pipefail
 
     ${main}
     exit ${exit_code}
-EOF)
+"
 
   echo "${stub_template}" > ${BATS_TEST_DIRNAME}/${TMP_STUB_PATH}/${1}
   chmod +x ${BATS_TEST_DIRNAME}/${TMP_STUB_PATH}/${1}
