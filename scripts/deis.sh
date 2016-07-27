@@ -58,9 +58,8 @@ wait-for-router() {
   local command_output
 
   while [ ${waited_time} -lt ${timeout_secs} ]; do
-    url="http://deis.$(get-router-ip).nip.io"
-    command_output="$(curl -sSL -o /dev/null -w '%{http_code}' "${url}/v2/")"
-    if [ "${command_output}" == "401" ]; then
+    command_output="$(curl -sSL -o /dev/null -w '%{http_code}' "$(get-router-ip)")"
+    if [ "${command_output}" == "404" ]; then
       return 0
     fi
 
@@ -68,7 +67,7 @@ wait-for-router() {
     (( waited_time += increment_secs ))
 
     if [ ${waited_time} -ge ${timeout_secs} ]; then
-      echo "Endpoint is unresponsive at ${url}"
+      echo "Endpoint is unresponsive at $(get-router-ip)"
       delete_lease
       exit 1
     fi
