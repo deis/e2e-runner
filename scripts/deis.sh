@@ -57,6 +57,8 @@ wait-for-router() {
   local waited_time=0
   local command_output
 
+  echo "Waiting for router at $(get-router-ip)"
+
   while [ ${waited_time} -lt ${timeout_secs} ]; do
     command_output="$(curl -sSL -o /dev/null -w '%{http_code}' "$(get-router-ip)")"
     if [ "${command_output}" == "404" ]; then
