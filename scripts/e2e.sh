@@ -19,9 +19,14 @@ retrive-artifacts() {
 
 return-pod-exit-code() {
   local name="${1}"
-  command_output="$(kubectl get po "${name}" -a --namespace=deis -o json | jq -r --arg container "tests" ".status.containerStatuses[] | select(.name==\$container) | .state.terminated.exitCode")"
+  get_po_output="$(kubectl get po "${name}" -a --namespace=deis -o json)"
+  command_output="$(echo "${get_po_output}" | jq -r --arg container "tests" ".status.containerStatuses[] | select(.name==\$container) | .state.terminated.exitCode")"
 
   if [ "${command_output}" == "null" ]; then
+    echo "'.state.terminated.exitCode' output from the 'tests' container of the ${name} pod was null."
+    echo "Here's the full ${name} pod output:"
+    echo "${get_po_output}"
+    echo "Returning 0"
     return 0
   fi
   return "${command_output}"
