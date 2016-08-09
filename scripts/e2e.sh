@@ -17,14 +17,17 @@ retrive-artifacts() {
   done < "${DEIS_LOG_DIR}/all-junit-files.out"
 }
 
+get-pod-output-json() {
+  local name="${1}"
+  kubectl get po "${name}" -a --namespace=deis -o json
+}
+
 return-pod-exit-code() {
   local name="${1}"
-  command_output="$(kubectl get po "${name}" -a --namespace=deis -o json | jq -r --arg container "tests" ".status.containerStatuses[] | select(.name==\$container) | .state.terminated.exitCode")"
+  wait-for-container-terminated "${name}" "tests"
+  exit_code="$(get-pod-output-json "${name}" | jq -r --arg container "tests" ".status.containerStatuses[] | select(.name==\$container) | .state.terminated.exitCode")"
 
-  if [ "${command_output}" == "null" ]; then
-    return 0
-  fi
-  return "${command_output}"
+  return "${exit_code}"
 }
 
 wait-for-pod-ready() {
@@ -32,7 +35,6 @@ wait-for-pod-ready() {
   local timeout_secs=15
   local increment_secs=1
   local waited_time=0
-  local command_output
 
   while [ ${waited_time} -lt ${timeout_secs} ]; do
     test_container_output="$(kubectl get po "${name}" -a --namespace=deis -o json | jq -r --arg container "tests" ".status.containerStatuses[] | select(.name==\$container) | .ready")"
@@ -48,6 +50,35 @@ wait-for-pod-ready() {
     if [ ${waited_time} -ge ${timeout_secs} ]; then
       echo
       echo "${WORKFLOW_E2E_CHART} was never ready. Test Container:${test_container_output} -- Artifact Container:${artifact_container_output}"
+      delete_lease
+      exit 1
+    fi
+
+    echo -n . 1>&2
+  done
+}
+
+wait-for-container-terminated() {
+  local pod_name="${1}"
+  local container_name="${2}"
+  local timeout_secs=15
+  local increment_secs=1
+  local waited_time=0
+  local container_status
+
+  while [ ${waited_time} -lt ${timeout_secs} ]; do
+    container_status="$(get-pod-output-json "${pod_name}" | jq -r --arg container "${container_name}" ".status.containerStatuses[] | select(.name==\$container) | .state | keys[0]")"
+
+    if [ "${container_status}" == "terminated" ]; then
+      return 0
+    fi
+
+    sleep ${increment_secs}
+    (( waited_time += increment_secs ))
+
+    if [ ${waited_time} -ge ${timeout_secs} ]; then
+      echo
+      echo "'${container_name}' container never terminated. Last status was '${container_status}'."
       delete_lease
       exit 1
     fi
