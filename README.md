@@ -3,6 +3,19 @@
 # e2e-runner
 Docker image for running workflow-e2e
 
+## Overview of use
+
+E2e-runner coordinates the entire e2e run against a Workflow [chart](https://github.com/deis/charts/tree/master/workflow-dev), including:
+
+  1. Coordinating the leasing of a GKE k8s cluster via [k8s-claimer](https://github.com/deis/k8s-claimer),
+  2. Cleaning up the leased cluster if need be (primarily deleting the `deis` namespace if still exists),
+  3. Setting up the local [helmc](https://github.com/helm/helm-classic) install on the leased cluster,
+  4. Generating and installing the Workflow and [Workflow-e2e](https://github.com/deis/charts/tree/master/workflow-dev-e2e) charts,
+  5. Monitoring to see when these charts are up and running,
+  6. Following and capturing chart logs and placing them where Jenkins/others can find them before deleting the cluster lease and exiting.
+
+See the main [run](https://github.com/deis/e2e-runner/blob/master/scripts/run.sh) script for the basic outline of actions presented above.  It is a good entry point into the finer details of e2e-runner functionality.
+
 ## Running the tests on CI
 To run the tests for a jenkins job you should have a `docker run` command that looks like the following:
 
