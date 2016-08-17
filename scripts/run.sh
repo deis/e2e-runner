@@ -65,23 +65,26 @@ echo "Test pod exited with code:${podExitCode}"
 #Collect artifacts
 retrive-artifacts
 retrieveArtifactsExitCode=$?
-echo "Retrieving artifacts exited with code ${retrieveArtifactsExitCode}"
+echo "Retrieving artifacts exited with code:${retrieveArtifactsExitCode}"
 
 
 #Clean up
 delete_lease
 deleteLeaseExitCode=$?
-echo "Deleting lease exited with code ${deleteLeaseExitCode}"
+echo "Deleting lease exited with code:${deleteLeaseExitCode}"
 
 if [ "$podExitCode" -ne "0" ]; then
+  echo "Received a non-zero exit code from the e2e test pod..."
   exit ${podExitCode}
 fi
 
 if [ "$retrieveArtifactsExitCode" -ne "0" ]; then
+  echo "Received a non-zero exit code when trying to fetch artifacts..."
   exit ${retrieveArtifactsExitCode}
 fi
 
 if [ "$deleteLeaseExitCode" -ne "0" ]; then
+  echo "Deleting the lease returned a non-zero exit code..."
   exit ${deleteLeaseExitCode}
 fi
 
