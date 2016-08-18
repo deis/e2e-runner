@@ -2,13 +2,24 @@
 
 deis_healthcheck() {
   wait-for-all-pods "deis"
-  local successes
+  local successes=0
+  local failures=0
+  local max_attempts=10
   echo "Checking to see if the workflow has come up properly."
-  while [[ ${successes} -lt 10 ]]; do
+  while [[ ${successes} -lt "${max_attempts}" ]] && [[ ${failures} -lt "${max_attempts}" ]]; do
     wait-for-router
-    let successes+=1
-    if ! ((successes % 10)); then
-      echo "Successfully interacted with Deis platform ${successes} time(s)."
+    if [ $? -eq 0 ]; then
+      let successes+=1
+    else
+      let failures+=1
+    fi
+
+    if [ ${successes} -eq ${max_attempts} ]; then
+      echo "Successfully interacted with Deis platform via '$(get-router-ip)' ${successes} time(s)."
+    elif [ ${failures} -eq ${max_attempts} ]; then
+      echo "Failed to interact with Deis platform via '$(get-router-ip)' ${failures} time(s); deleting lease and exiting."
+      delete_lease
+      exit 1
     fi
     sleep 1
   done
@@ -58,7 +69,11 @@ wait-for-router() {
   local command_output
 
   while [ ${waited_time} -lt ${timeout_secs} ]; do
-    command_output="$(curl -sSL -o /dev/null -w '%{http_code}' "$(get-router-ip)")"
+    router_ip="$(get-router-ip)"
+
+    command_output="$(curl -sSL -o /dev/null -w '%{http_code}' "${router_ip}")"
+    command_exit_code=$?
+
     if [ "${command_output}" == "404" ]; then
       return 0
     fi
@@ -67,12 +82,13 @@ wait-for-router() {
     (( waited_time += increment_secs ))
 
     if [ ${waited_time} -ge ${timeout_secs} ]; then
-      echo "Endpoint is unresponsive at $(get-router-ip)"
+      echo "Endpoint is unresponsive at ${router_ip}"
       delete_lease
       exit 1
     fi
 
     echo -n . 1>&2
+    return ${command_exit_code}
   done
 }
 
