@@ -57,6 +57,9 @@ helmc generate "${WORKFLOW_E2E_CHART}"
 echo "Installing ${WORKFLOW_E2E_CHART}"
 helmc install "${WORKFLOW_E2E_CHART}" &> /dev/null
 
+echo "Running kubectl describe pod ${WORKFLOW_E2E_CHART} and piping the output to ${DEIS_DESCRIBE}"
+kubectl describe pod "${WORKFLOW_E2E_CHART}" --namespace=deis >> "${DEIS_DESCRIBE}" 2> /dev/null
+
 # Capture e2e run test output
 tail_logs_from_e2e_pod
 podExitCode=$?
