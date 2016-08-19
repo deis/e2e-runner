@@ -32,7 +32,7 @@ return-pod-exit-code() {
 
 wait-for-pod-ready() {
   local name="${1}"
-  local timeout_secs=15
+  local timeout_secs=30
   local increment_secs=1
   local waited_time=0
 
