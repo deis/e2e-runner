@@ -72,7 +72,7 @@ echo "Retrieving artifacts exited with code:${retrieveArtifactsExitCode}"
 
 
 #Clean up
-delete_lease
+delete-lease
 deleteLeaseExitCode=$?
 echo "Deleting lease exited with code:${deleteLeaseExitCode}"
 

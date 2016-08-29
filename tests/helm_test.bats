@@ -35,7 +35,7 @@ teardown() {
 
 @test "clean_cluster : cluster not clean and namespaces don't go away" {
   export DEFAULT_TIMEOUT_SECS=1
-  stub delete_lease
+  stub delete-lease
 
   pods_output="deis-controller"
   ns_output="deis"

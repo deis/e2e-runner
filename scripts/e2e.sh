@@ -50,7 +50,7 @@ wait-for-pod-ready() {
     if [ ${waited_time} -ge ${timeout_secs} ]; then
       echo
       echo "${WORKFLOW_E2E_CHART} was never ready. Test Container:${test_container_output} -- Artifact Container:${artifact_container_output}"
-      delete_lease
+      delete-lease
       exit 1
     fi
 
@@ -79,7 +79,7 @@ wait-for-container-terminated() {
     if [ ${waited_time} -ge ${timeout_secs} ]; then
       echo
       echo "'${container_name}' container never terminated. Last status was '${container_status}'."
-      delete_lease
+      delete-lease
       exit 1
     fi
 

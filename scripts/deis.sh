@@ -18,7 +18,7 @@ deis_healthcheck() {
       echo "Successfully interacted with Deis platform via '$(get-router-ip)' ${successes} time(s)."
     elif [ ${failures} -eq ${max_attempts} ]; then
       echo "Failed to interact with Deis platform via '$(get-router-ip)' ${failures} time(s); deleting lease and exiting."
-      delete_lease
+      delete-lease
       exit 1
     fi
     sleep 1
@@ -47,7 +47,7 @@ wait-for-all-pods() {
     if [ ${waited_time} -ge ${timeout_secs} ]; then
       echo "Not all pods started."
       kubectl get pods --namespace=deis
-      delete_lease
+      delete-lease
       exit 1
     fi
 
@@ -83,7 +83,7 @@ wait-for-router() {
 
     if [ ${waited_time} -ge ${timeout_secs} ]; then
       echo "Endpoint is unresponsive at ${router_ip}"
-      delete_lease
+      delete-lease
       exit 1
     fi
 
