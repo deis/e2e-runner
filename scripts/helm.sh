@@ -24,7 +24,7 @@ clean_cluster() {
 
       if [ ${waited_time} -ge "${timeout_secs}" ]; then
         echo "Namespace was never deleted"
-        delete_lease
+        delete-lease
         exit 1
       fi
       echo -n . 1>&2
