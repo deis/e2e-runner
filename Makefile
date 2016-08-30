@@ -6,6 +6,7 @@ IMAGE_PREFIX ?= deisci
 IMAGE := ${DEIS_REGISTRY}${IMAGE_PREFIX}/${SHORT_NAME}:${VERSION}
 MUTABLE_IMAGE := ${DEIS_REGISTRY}${IMAGE_PREFIX}/${SHORT_NAME}:canary
 CLI_VERSION ?= latest
+E2E_DIR_LOGS ?= ${PWD}/logs
 
 BATS_CMD := bats --tap tests
 SHELLCHECK_CMD := shellcheck -e SC1091 -e SC2002 scripts/*
@@ -24,7 +25,7 @@ run:
 		-e CLI_VERSION="${CLI_VERSION}" \
 		-e CLUSTER_REGEX="${CLUSTER_REGEX}" \
 		-e CLUSTER_VERSION="${CLUSTER_VERSION}" \
-		${IMAGE}
+		-v "${E2E_DIR_LOGS}":/home/jenkins/logs:rw ${IMAGE}
 
 docker-build:
 	docker build -t ${IMAGE} .
