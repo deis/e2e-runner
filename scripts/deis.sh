@@ -34,7 +34,7 @@ wait-for-all-pods() {
 
   local command_output
   while [ ${waited_time} -lt ${timeout_secs} ]; do
-    kubectl get pods --namespace=deis -o json | jq -r ".items[].status.conditions[0].status" | grep -q "False"
+    kubectl get pods --namespace=deis -o json | jq -r '.items[].status.conditions[] | select(.type=="Ready")' | grep -q "False"
     if [ $? -gt 0 ]; then
       echo
       echo "All pods are running!"
