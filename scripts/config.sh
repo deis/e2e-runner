@@ -15,6 +15,7 @@ export DEIS_LOG_DIR="${DEIS_LOG_DIR:-/home/jenkins/logs}"
 export K8S_EVENT_LOG="${DEIS_LOG_DIR}/k8s-events.log"
 export K8S_OBJECT_LOG="${DEIS_LOG_DIR}/k8s-objects.log"
 export DEIS_DESCRIBE="${DEIS_LOG_DIR}/deis-describe.log"
+export CLAIMER_URL="${CLAIMER_URL:-k8s-claimer.champagne.deis.com}"
 
 # Make sure we get the env vars for the components setup
 components=(
