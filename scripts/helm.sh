@@ -34,3 +34,12 @@ clean_cluster() {
     return 0
   fi
 }
+
+# install the kubernetes helm binary.
+install_helm() {
+  local helm_version=${HELM_VERSION:-canary}
+  wget http://storage.googleapis.com/kubernetes-helm/helm-"${helm_version}"-linux-amd64.tar.gz
+  tar -zxvf helm-"${HELM_VERSION}"-linux-amd64.tar.gz
+  mv linux-amd64/helm /usr/bin/helm
+  helm init
+}
