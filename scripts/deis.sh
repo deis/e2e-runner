@@ -68,6 +68,8 @@ wait-for-router() {
   local waited_time=0
   local command_output
 
+  echo "Waiting for router at $(get-router-ip)"
+
   while [ ${waited_time} -lt ${timeout_secs} ]; do
     router_ip="$(get-router-ip)"
 
