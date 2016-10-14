@@ -27,8 +27,8 @@ then
   install_helm
   echo "Adding  deis workflow chart repo"
   helm repo add workflow-dev https://charts.deis.com/workflow-dev
-  echo "Installing chart workflow-${RELEASE_TAG}"
-  helm install workflow-dev/workflow --version="${RELEASE_TAG}" --namespace=deis
+  echo "Installing chart workflow-${WORKFLOW_TAG}"
+  helm install workflow-dev/workflow --version="${WORKFLOW_TAG}" --namespace=deis
 else
   # Get Helm up to date and checkout branch if needed
   echo "Adding repo ${HELM_REMOTE_REPO}"
@@ -64,7 +64,7 @@ then
   helm repo add workflow-e2e https://charts.deis.com/workflow-e2e
   echo "Installing workflow-e2e chart workflow-e2e-${WORKFLOW_E2E_TAG}"
   helm install workflow-e2e/workflow-e2e --version="${WORKFLOW_E2E_TAG}" --namespace=deis
-  WORKFLOW_E2E_CHART=workflow-${WORKFLOW_E2E_TAG}-e2e
+  WORKFLOW_E2E_CHART=workflow-e2e
 else
   echo "Installing workflow-e2e chart ${WORKFLOW_E2E_CHART}"
   cd "${DEIS_CHART_HOME}" || exit
