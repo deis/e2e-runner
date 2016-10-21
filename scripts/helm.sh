@@ -51,7 +51,7 @@ install_helm() {
 
 wait-for-tiller-pod-ready() {
   local name="${1}"
-  local timeout_secs=30
+  local timeout_secs=60
   local increment_secs=1
   local waited_time=0
 
