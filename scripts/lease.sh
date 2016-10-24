@@ -37,6 +37,11 @@ delete-lease() {
   kubectl delete namespace "deis" &> /dev/null
   echo "Deleting all test namespaces"
   kubectl get namespace | grep test | awk '{print $1}' | xargs kubectl delete namespace &> /dev/null
+  if [ -n "$USE_KUBERNETES_HELM" ]
+  then
+    echo "Uninstall the tiller"
+    kubectl delete deployment "tiller-deploy" --namespace "kube-system" &> /dev/null
+  fi
   echo "Deleting Lease for ${CLUSTER_NAME} -- ${TOKEN}"
   k8s-claimer --server="${CLAIMER_URL}" lease delete "${TOKEN}"
   return 0
