@@ -25,10 +25,12 @@ if [ -n "$USE_KUBERNETES_HELM" ]
 then
   echo "Installing kubernetes helm"
   install_helm
-  echo "Adding  deis workflow chart repo"
-  helm repo add workflow-dev https://charts.deis.com/workflow-dev
+
+  chart_repo="$(get-chart-repo workflow "${CHART_REPO_TYPE}")"
+  echo "Adding workflow chart repo '${chart_repo}'"
+  helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
   echo "Installing chart workflow-${WORKFLOW_TAG}"
-  helm install workflow-dev/workflow --version="${WORKFLOW_TAG}" --namespace=deis
+  helm install "${chart_repo}"/workflow --version="${WORKFLOW_TAG}" --namespace=deis
 else
   # Get Helm up to date and checkout branch if needed
   echo "Adding repo ${HELM_REMOTE_REPO}"
@@ -60,10 +62,11 @@ echo "Use http://grafana.$(get-router-ip).nip.io/ to monitor the e2e run"
 # Install e2e chart
 if [ -n "$USE_KUBERNETES_HELM" ]
 then
-  echo "Adding deis e2e chart repo"
-  helm repo add workflow-e2e https://charts.deis.com/workflow-e2e
+  chart_repo="$(get-chart-repo workflow-e2e "${CHART_REPO_TYPE}")"
+  echo "Adding workflow-e2e chart repo '${chart_repo}'"
+  helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
   echo "Installing workflow-e2e chart workflow-e2e-${WORKFLOW_E2E_TAG}"
-  helm install workflow-e2e/workflow-e2e --version="${WORKFLOW_E2E_TAG}" --namespace=deis
+  helm install "${chart_repo}"/workflow-e2e --version="${WORKFLOW_E2E_TAG}" --namespace=deis
   WORKFLOW_E2E_CHART=workflow-e2e
 else
   echo "Installing workflow-e2e chart ${WORKFLOW_E2E_CHART}"
