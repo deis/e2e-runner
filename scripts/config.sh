@@ -19,7 +19,7 @@ export DEIS_DESCRIBE="${DEIS_LOG_DIR}/deis-describe.log"
 export CLAIMER_URL="${CLAIMER_URL:-k8s-claimer.champagne.deis.com}"
 
 # Make sure we get the env vars for the components setup
-components=(
+repos=(
   "BUILDER"
   "CHARTS"
   "CONTROLLER"
@@ -41,4 +41,4 @@ components=(
   "WORKFLOW_MANAGER"
 )
 
-check-vars "${components[@]}"
+check-vars "${repos[@]}"

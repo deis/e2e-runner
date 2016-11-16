@@ -29,8 +29,16 @@ then
   chart_repo="$(get-chart-repo workflow "${CHART_REPO_TYPE}")"
   echo "Adding workflow chart repo '${chart_repo}'"
   helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
+
+  # determine values to set by inspecting env for <COMPONENT>_GIT_TAG vars
+  values_to_set="$(set-chart-values-from-env)"
+  set_flag=""
+  if [ -n "${values_to_set}" ]; then
+    set_flag="--set ${values_to_set}"
+  fi
+
   echo "Installing chart workflow-${WORKFLOW_TAG}"
-  helm install "${chart_repo}"/workflow --version="${WORKFLOW_TAG}" --namespace=deis
+  helm install "${chart_repo}"/workflow --version="${WORKFLOW_TAG}" --namespace=deis "${set_flag}"
 else
   # Get Helm up to date and checkout branch if needed
   echo "Adding repo ${HELM_REMOTE_REPO}"
@@ -65,8 +73,15 @@ then
   chart_repo="$(get-chart-repo workflow-e2e "${CHART_REPO_TYPE}")"
   echo "Adding workflow-e2e chart repo '${chart_repo}'"
   helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
+
+  # determine value to set by inspecting env for WORKFLOW_E2E_GIT_TAG var
+  set_flag=""
+  if [ -n "${WORKFLOW_E2E_GIT_TAG}" ]; then
+    set_flag="--set docker_tag=${WORKFLOW_E2E_GIT_TAG}"
+  fi
+  
   echo "Installing workflow-e2e chart workflow-e2e-${WORKFLOW_E2E_TAG}"
-  helm install "${chart_repo}"/workflow-e2e --version="${WORKFLOW_E2E_TAG}" --namespace=deis
+  helm install "${chart_repo}"/workflow-e2e --version="${WORKFLOW_E2E_TAG}" --namespace=deis "${set_flag}"
   WORKFLOW_E2E_CHART=workflow-e2e
 else
   echo "Installing workflow-e2e chart ${WORKFLOW_E2E_CHART}"
