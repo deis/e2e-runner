@@ -13,3 +13,11 @@ function check-vars {
     fi
   done
 }
+
+function get-chart-repo {
+  chart="${1}"
+  repo_type="${2}"
+
+  # strip '-production' if repo_type 'production'
+  echo "${chart}-${repo_type}" | sed -e 's/-production//g'
+}
