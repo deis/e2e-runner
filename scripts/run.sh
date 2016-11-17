@@ -21,7 +21,7 @@ kubectl get nodes
 echo "Cleaning cluster if needed"
 clean_cluster
 
-if [ -n "$USE_KUBERNETES_HELM" ]
+if [ "${USE_KUBERNETES_HELM}" == true ]
 then
   echo "Installing kubernetes helm"
   install_helm
@@ -60,7 +60,7 @@ deis_healthcheck
 echo "Use http://grafana.$(get-router-ip).nip.io/ to monitor the e2e run"
 
 # Install e2e chart
-if [ -n "$USE_KUBERNETES_HELM" ]
+if [ "${USE_KUBERNETES_HELM}" == true ]
 then
   chart_repo="$(get-chart-repo workflow-e2e "${CHART_REPO_TYPE}")"
   echo "Adding workflow-e2e chart repo '${chart_repo}'"
