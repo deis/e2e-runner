@@ -21,7 +21,7 @@ kubectl get nodes
 echo "Cleaning cluster if needed"
 clean_cluster
 
-if [ "${USE_KUBERNETES_HELM}" == true ]
+if [ "${USE_HELM_CLASSIC}" != true ]
 then
   echo "Installing kubernetes helm"
   install_helm
@@ -30,16 +30,10 @@ then
   echo "Adding workflow chart repo '${chart_repo}'"
   helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
 
-  # determine values to set by inspecting env for <COMPONENT>_GIT_TAG vars
-  values_to_set="$(set-chart-values-from-env)"
-  set_flag=""
-  if [ -n "${values_to_set}" ]; then
-    set_flag="--set ${values_to_set}"
-  fi
-
   echo "Installing chart workflow-${WORKFLOW_TAG}"
-  helm install "${chart_repo}"/workflow --version="${WORKFLOW_TAG}" --namespace=deis "${set_flag}"
-else
+  helm install "${chart_repo}"/workflow --version="${WORKFLOW_TAG}" \
+    --namespace=deis "$(set-chart-values workflow)"
+else # helmc-remove
   # Get Helm up to date and checkout branch if needed
   echo "Adding repo ${HELM_REMOTE_REPO}"
   helmc repo add deis "${HELM_REMOTE_REPO}"
@@ -68,22 +62,16 @@ deis_healthcheck
 echo "Use http://grafana.$(get-router-ip).nip.io/ to monitor the e2e run"
 
 # Install e2e chart
-if [ "${USE_KUBERNETES_HELM}" == true ]
+if [ "${USE_HELM_CLASSIC}" != true ]
 then
   chart_repo="$(get-chart-repo workflow-e2e "${CHART_REPO_TYPE}")"
   echo "Adding workflow-e2e chart repo '${chart_repo}'"
   helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
 
-  # determine value to set by inspecting env for WORKFLOW_E2E_GIT_TAG var
-  set_flag=""
-  if [ -n "${WORKFLOW_E2E_GIT_TAG}" ]; then
-    set_flag="--set docker_tag=${WORKFLOW_E2E_GIT_TAG}"
-  fi
-  
   echo "Installing workflow-e2e chart workflow-e2e-${WORKFLOW_E2E_TAG}"
-  helm install "${chart_repo}"/workflow-e2e --version="${WORKFLOW_E2E_TAG}" --namespace=deis "${set_flag}"
-  WORKFLOW_E2E_CHART=workflow-e2e
-else
+  helm install "${chart_repo}"/workflow-e2e --version="${WORKFLOW_E2E_TAG}" \
+    --namespace=deis "$(set-chart-values workflow-e2e)"
+else # helmc-remove
   echo "Installing workflow-e2e chart ${WORKFLOW_E2E_CHART}"
   cd "${DEIS_CHART_HOME}" || exit
   echo "Checking out ${WORKFLOW_E2E_BRANCH} for ${WORKFLOW_E2E_CHART}"
@@ -94,6 +82,8 @@ else
   helmc install "${WORKFLOW_E2E_CHART}" &> /dev/null
 fi
 
+# helmc-remove: with helm, e2e chart name will remain the same: workflow-e2e (remove env var)
+WORKFLOW_E2E_CHART="${WORKFLOW_E2E_CHART:-workflow-e2e}"
 echo "Running kubectl describe pod ${WORKFLOW_E2E_CHART} and piping the output to ${DEIS_DESCRIBE}"
 kubectl describe pod "${WORKFLOW_E2E_CHART}" --namespace=deis >> "${DEIS_DESCRIBE}" 2> /dev/null
 
