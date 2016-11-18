@@ -45,6 +45,10 @@ install_helm() {
   tar -zxvf helm-"${HELM_VERSION}"-linux-amd64.tar.gz
   export PATH="linux-amd64:${PATH}"
   export HELM_HOME=/home/jenkins/workspace/$JOB_NAME/$BUILD_NUMBER
+
+  echo "Uninstall tiller-deploy if exists"
+  kubectl delete deployment "tiller-deploy" --namespace "kube-system" &> /dev/null || true
+
   helm init
   wait-for-tiller-pod-ready "tiller-deploy"
 }
