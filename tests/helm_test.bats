@@ -2,49 +2,52 @@
 
 setup() {
   . "${BATS_TEST_DIRNAME}/../scripts/helm.sh"
-  load stub
-  load stubs/tpl/kubectl
 }
 
-teardown() {
-  rm_stubs
-}
+@test "set-chart-values : none in env" {
+  run set-chart-values
 
-@test "clean_cluster : cluster already clean" {
-  pods_output="foo"
-  ns_output="bar"
-  stub kubectl "$(generate ${pods_output} ${ns_output})" 0
-
-  run clean_cluster
-  echo "${output}"
   [ "${status}" -eq 0 ]
-  [ "${output}" = "Cluster already clean." ]
+  [ "${output}" = "" ]
 }
 
-@test "clean_cluster : cluster not clean and namespaces go away" {
-  pods_output="deis-controller"
-  ns_output="bar"
-  stub kubectl "$(generate ${pods_output} ${ns_output})" 0
+@test "set-chart-values : workflow, one in env" {
+  POSTGRES_SHA='abc123456789'
+  run set-chart-values workflow
 
-  run clean_cluster
-  echo "${output}"
   [ "${status}" -eq 0 ]
-  [ "${lines[0]}" = "Deis was installed so I'm removing it!" ]
-  [ "${lines[1]}" = "Waiting for namespace to go away!" ]
+  [ "${output}" = "--set database.docker_tag=git-abc1234" ]
 }
 
-@test "clean_cluster : cluster not clean and namespaces don't go away" {
-  export DEFAULT_TIMEOUT_SECS=1
-  stub delete-lease
+@test "set-chart-values : workflow, multiple in env" {
+  POSTGRES_SHA='abc123456789'
+  NSQ_SHA='def567891234'
+  CONTROLLER_SHA='ghi912345678'
+  FOO_SHA='xxx000000000'
+  run set-chart-values workflow
 
-  pods_output="deis-controller"
-  ns_output="deis"
-  stub kubectl "$(generate ${pods_output} ${ns_output})" 0
+  [ "${status}" -eq 0 ]
+  [ "${output}" = "--set nsqd.docker_tag=git-def5678,database.docker_tag=git-abc1234,controller.docker_tag=git-ghi9123" ]
+}
 
-  run clean_cluster
-  echo "${output}"
-  [ "${status}" -eq 1 ]
-  [ "${lines[0]}" = "Deis was installed so I'm removing it!" ]
-  [ "${lines[1]}" = "Waiting for namespace to go away!" ]
-  [ "${lines[2]}" = "Namespace was never deleted" ]
+@test "set-chart-values : workflow-e2e" {
+  WORKFLOW_E2E_SHA='abc123456789'
+  run set-chart-values workflow-e2e
+
+  [ "${status}" -eq 0 ]
+  [ "${output}" = "--set docker_tag=git-abc1234" ]
+}
+
+@test "get-chart-repo : non-production" {
+  run get-chart-repo 'foo' 'dev'
+
+  [ "${status}" -eq 0 ]
+  [ "${output}" == 'foo-dev' ]
+}
+
+@test "get-chart-repo : production" {
+  run get-chart-repo 'foo' 'production'
+
+  [ "${status}" -eq 0 ]
+  [ "${output}" == 'foo' ]
 }
