@@ -7,7 +7,7 @@ install_helm() {
   # Download CLI, retry up to 5 times with 10 second delay between each
   echo "Installing Helm CLI version '${helm_version}' via url '${url}'"
   curl -f --silent --show-error --retry 5 --retry-delay 10 -O "${url}"
-  tar -zxvf helm-"${HELM_VERSION}"-linux-amd64.tar.gz
+  tar -zxvf helm-"${helm_version}"-linux-amd64.tar.gz
   export PATH="linux-amd64:${PATH}"
   export HELM_HOME=/home/jenkins/workspace/$JOB_NAME/$BUILD_NUMBER
 
@@ -52,6 +52,27 @@ function get-chart-repo {
   repo_type="${2}"
 
   echo "${chart}-${repo_type}" | sed -e 's/-production//g'
+}
+
+# set-chart-version constructs a version flag for use on helm install, depending
+# on the presence of the appropriate env var (supports workflow and workflow-e2e)
+function set-chart-version {
+  local chart="${1}"
+
+  local version_to_set
+  case "${chart}" in
+    'workflow')
+      version_to_set="${WORKFLOW_TAG}"
+      ;;
+    'workflow-e2e')
+      version_to_set="${WORKFLOW_E2E_TAG}"
+      ;;
+  esac
+
+  if [ -n "${version_to_set}" ]; then
+    echo "Installing ${chart} chart ${chart}-${version_to_set}" >&2
+    echo "--version ${version_to_set}"
+  fi
 }
 
 # set-chart-values constructs a list of chart values to set based on the presence
