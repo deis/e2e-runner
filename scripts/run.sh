@@ -30,9 +30,9 @@ then
   echo "Adding workflow chart repo '${chart_repo}'"
   helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
 
-  echo "Installing chart workflow-${WORKFLOW_TAG}"
-  helm install "${chart_repo}"/workflow --version="${WORKFLOW_TAG}" \
-    --namespace=deis "$(set-chart-values workflow)"
+  # shellcheck disable=SC2046
+  helm install "${chart_repo}"/workflow --namespace=deis \
+    $(set-chart-version workflow) $(set-chart-values workflow)
 else # helmc-remove
   # Get Helm up to date and checkout branch if needed
   echo "Adding repo ${HELM_REMOTE_REPO}"
@@ -68,9 +68,9 @@ then
   echo "Adding workflow-e2e chart repo '${chart_repo}'"
   helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
 
-  echo "Installing workflow-e2e chart workflow-e2e-${WORKFLOW_E2E_TAG}"
-  helm install "${chart_repo}"/workflow-e2e --version="${WORKFLOW_E2E_TAG}" \
-    --namespace=deis "$(set-chart-values workflow-e2e)"
+  # shellcheck disable=SC2046
+  helm install "${chart_repo}"/workflow-e2e --namespace=deis \
+    $(set-chart-version workflow-e2e) $(set-chart-values workflow-e2e)
 else # helmc-remove
   echo "Installing workflow-e2e chart ${WORKFLOW_E2E_CHART}"
   cd "${DEIS_CHART_HOME}" || exit
