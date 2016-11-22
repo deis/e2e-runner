@@ -17,8 +17,6 @@ export HELM_REMOTE_REPO="${HELM_REMOTE_REPO:-https://github.com/deis/charts.git}
 export DEIS_CHART_HOME=$HELMC_HOME/cache/deis
 export WORKFLOW_BRANCH="${WORKFLOW_BRANCH:-master}"
 export WORKFLOW_E2E_BRANCH="${WORKFLOW_E2E_BRANCH:-master}"
-export WORKFLOW_CHART="${WORKFLOW_CHART:-workflow-dev}"
-export WORKFLOW_E2E_CHART="${WORKFLOW_E2E_CHART:-workflow-dev-e2e}"
 
 repos=(
   "BUILDER"
