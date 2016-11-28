@@ -57,10 +57,11 @@ setup() {
 
 @test "set-chart-values : workflow-e2e" {
   WORKFLOW_E2E_SHA='abc123456789'
+  WORKFLOW_CLI_SHA='def567891234'
   run set-chart-values workflow-e2e
 
   [ "${status}" -eq 0 ]
-  [ "${output}" == "--set docker_tag=git-abc1234" ]
+  [ "${output}" == "--set docker_tag=git-abc1234,cli_version=def5678" ]
 }
 
 @test "get-chart-repo : non-production" {

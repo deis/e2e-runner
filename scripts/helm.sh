@@ -107,7 +107,10 @@ function set-chart-values {
     ;;
 
     'workflow-e2e')
-      component_to_chart_map=(["WORKFLOW_E2E"]="workflow-e2e")
+      component_to_chart_map=(
+        ["WORKFLOW_E2E"]="workflow-e2e"
+        ["WORKFLOW_CLI"]="workflow-cli"
+      )
     ;;
   esac
 
@@ -123,6 +126,10 @@ function set-chart-values {
 
       if [ "${component_chart}" != "workflow-e2e" ]; then
         value_to_set="${component_chart}.${value_to_set}"
+      fi
+
+      if [ "${env_var_key}" == "WORKFLOW_CLI_SHA" ]; then
+        value_to_set="cli_version=${env_var_value:0:7}"
       fi
 
       if [ -z "${values_to_set}" ]; then
