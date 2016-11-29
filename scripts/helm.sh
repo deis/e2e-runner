@@ -46,12 +46,16 @@ wait-for-tiller-pod-ready() {
 }
 
 # get-chart-repo simply returns '<chart>-<repo_type>', stripping `-production` if
-# repo_type is 'production'
+# repo_type is 'production' and stripping '-staging' if chart is not 'workflow'
 function get-chart-repo {
   chart="${1}"
   repo_type="${2}"
 
-  echo "${chart}-${repo_type}" | sed -e 's/-production//g'
+  if [ "${chart}" == "workflow" ]; then
+    echo "${chart}-${repo_type}" | sed -e 's/-production//g'
+  else
+    echo "${chart}-${repo_type}" | sed -e 's/-production//g' | sed -e 's/-staging//g'
+  fi
 }
 
 # set-chart-version constructs a version flag for use on helm install, depending

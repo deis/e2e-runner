@@ -77,3 +77,17 @@ setup() {
   [ "${status}" -eq 0 ]
   [ "${output}" == 'foo' ]
 }
+
+@test "get-chart-repo : workflow staging" {
+  run get-chart-repo 'workflow' 'staging'
+
+  [ "${status}" -eq 0 ]
+  [ "${output}" == 'workflow-staging' ]
+}
+
+@test "get-chart-repo : component staging" {
+  run get-chart-repo 'component' 'staging'
+
+  [ "${status}" -eq 0 ]
+  [ "${output}" == 'component' ]
+}
