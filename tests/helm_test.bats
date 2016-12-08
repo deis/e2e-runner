@@ -64,18 +64,18 @@ setup() {
   [ "${output}" == "--set docker_tag=git-abc1234,cli_version=def5678" ]
 }
 
-@test "get-chart-repo : non-production" {
-  run get-chart-repo 'foo' 'dev'
+@test "get-chart-repo : workflow dev" {
+  run get-chart-repo 'workflow' 'dev'
 
   [ "${status}" -eq 0 ]
-  [ "${output}" == 'foo-dev' ]
+  [ "${output}" == 'workflow-dev' ]
 }
 
-@test "get-chart-repo : production" {
-  run get-chart-repo 'foo' 'production'
+@test "get-chart-repo : workflow production" {
+  run get-chart-repo 'workflow' 'production'
 
   [ "${status}" -eq 0 ]
-  [ "${output}" == 'foo' ]
+  [ "${output}" == 'workflow' ]
 }
 
 @test "get-chart-repo : workflow staging" {
@@ -85,9 +85,25 @@ setup() {
   [ "${output}" == 'workflow-staging' ]
 }
 
-@test "get-chart-repo : component staging" {
-  run get-chart-repo 'component' 'staging'
+@test "get-chart-repo : workflow-e2e staging" {
+  # there is no staging repo for workflow-e2e; use default
+  run get-chart-repo 'workflow-e2e' 'staging'
 
   [ "${status}" -eq 0 ]
-  [ "${output}" == 'component' ]
+  [ "${output}" == 'workflow-e2e-dev' ]
+}
+
+@test "get-chart-repo : workflow-e2e pr, no WORKFLOW_E2E_TAG set" {
+  run get-chart-repo 'workflow-e2e' 'pr'
+
+  [ "${status}" -eq 0 ]
+  [ "${output}" == 'workflow-e2e-dev' ]
+}
+
+@test "get-chart-repo : workflow-e2e pr, WORKFLOW_E2E_TAG set" {
+  WORKFLOW_E2E_TAG='foo'
+  run get-chart-repo 'workflow-e2e' 'pr'
+
+  [ "${status}" -eq 0 ]
+  [ "${output}" == 'workflow-e2e-pr' ]
 }
