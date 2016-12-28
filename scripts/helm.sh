@@ -128,6 +128,7 @@ function set-chart-values {
   esac
 
   local values_to_set
+  # Check <COMPONENT>_SHA env vars and set values appropriately
   for component in "${!component_to_chart_map[@]}"
   do
     env_var_key="${component}_SHA"
@@ -145,15 +146,35 @@ function set-chart-values {
         value_to_set="cli_version=${env_var_value:0:7}"
       fi
 
-      if [ -z "${values_to_set}" ]; then
-        values_to_set="${value_to_set}"
-      else
-        values_to_set="${values_to_set},${value_to_set}"
-      fi
+      values_to_set="$(append-value "${value_to_set}" "${values_to_set}")"
     fi
   done
+
+  # Check STORAGE_TYPE env var for setting up external storage backend
+  if [ "${STORAGE_TYPE}" == "s3" ]; then
+    for value_pair in global.storage=s3 s3.accesskey=${AWS_ACCESS_KEY} s3.secretkey=${AWS_SECRET_KEY} s3.builder_bucket=${BUILDER_BUCKET} s3.database_bucket=${DATABASE_BUCKET} s3.registry_bucket=${REGISTRY_BUCKET}; do
+      values_to_set="$(append-value "${value_pair}" "${values_to_set}")"
+    done
+  elif [ "${STORAGE_TYPE}" == "gcs" ]; then
+    for value_pair in global.storage=gcs gcs.key_json=${GCS_KEY_JSON} gcs.builder_bucket=${BUILDER_BUCKET} gcs.database_bucket=${DATABASE_BUCKET} gcs.registry_bucket=${REGISTRY_BUCKET}; do
+      values_to_set="$(append-value "${value_pair}" "${values_to_set}")"
+    done
+  fi
 
   if [ -n "${values_to_set}" ]; then
     echo "--set ${values_to_set}"
   fi
+}
+
+function append-value() {
+  new_value="${1}"
+  values="${2}"
+
+  if [ -z "${values}" ]; then
+    values="${new_value}"
+  else
+    values="${values},${new_value}"
+  fi
+
+  echo "${values}"
 }
