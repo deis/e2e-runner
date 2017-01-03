@@ -2,10 +2,10 @@
 
 # Check to see if deis is installed, if so uninstall it.
 clean_cluster() {
-  kubectl get pods --namespace=deis | grep -q deis-controller
+  kubectl get ns | grep -q deis
   if [ $? -eq 0 ]; then
     echo "Deis was installed so I'm removing it!"
-    kubectl delete namespace "deis" &> /dev/null
+    kubectl delete ns "deis" &> /dev/null
 
     local timeout_secs=${DEFAULT_TIMEOUT_SECS:-180}
     local increment_secs=1
