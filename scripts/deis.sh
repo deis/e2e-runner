@@ -128,9 +128,9 @@ wait-for-router() {
 }
 
 get-pod-logs() {
-  pods=$(kubectl get pods --namespace=deis | sed '1d' | awk '{print $1}')
-  while read -r pod; do
-    kubectl logs "${pod}" --namespace=deis >> "${DEIS_LOG_DIR}/${pod}.log"
-    kubectl logs "${pod}" -p --namespace=deis >> "${DEIS_LOG_DIR}/${pod}-previous.log"
+  pods=$(kubectl get pods --all-namespaces | sed '1d' | awk '{print $1, $2}')
+  while read -r namespace pod; do
+    kubectl logs "${pod}" --namespace="${namespace}" >> "${DEIS_LOG_DIR}/${namespace}-${pod}.log"
+    kubectl logs "${pod}" -p --namespace="${namespace}" >> "${DEIS_LOG_DIR}/${namespace}-${pod}-previous.log"
   done <<< "$pods"
 }
