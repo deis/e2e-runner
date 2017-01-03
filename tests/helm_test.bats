@@ -55,6 +55,35 @@ setup() {
   [ "${output}" == "--set nsqd.docker_tag=git-def5678,database.docker_tag=git-abc1234,controller.docker_tag=git-ghi9123" ]
 }
 
+@test "set-chart-values : workflow, storage type (gcs)" {
+  STORAGE_TYPE="gcs"
+  GCS_KEY_JSON="gcskey"
+  BUILDER_BUCKET='builder-bucket'
+  DATABASE_BUCKET='database-bucket'
+  REGISTRY_BUCKET='registry-bucket'
+
+  run set-chart-values workflow
+
+  [ "${status}" -eq 0 ]
+  [ "${output}" == "--set global.storage=gcs,gcs.key_json=gcskey,gcs.builder_bucket=builder-bucket,gcs.database_bucket=database-bucket,gcs.registry_bucket=registry-bucket" ]
+}
+
+@test "set-chart-values : workflow, storage type (s3) and component shas" {
+  POSTGRES_SHA='abc123456789'
+  NSQ_SHA='def567891234'
+  STORAGE_TYPE='s3'
+  AWS_ACCESS_KEY='aws_access_key'
+  AWS_SECRET_KEY='aws_secret_key'
+  BUILDER_BUCKET='builder-bucket'
+  DATABASE_BUCKET='database-bucket'
+  REGISTRY_BUCKET='registry-bucket'
+
+  run set-chart-values workflow
+
+  [ "${status}" -eq 0 ]
+  [ "${output}" == "--set nsqd.docker_tag=git-def5678,database.docker_tag=git-abc1234,global.storage=s3,s3.accesskey=aws_access_key,s3.secretkey=aws_secret_key,s3.builder_bucket=builder-bucket,s3.database_bucket=database-bucket,s3.registry_bucket=registry-bucket" ]
+}
+
 @test "set-chart-values : workflow-e2e" {
   WORKFLOW_E2E_SHA='abc123456789'
   WORKFLOW_CLI_SHA='def567891234'
