@@ -33,7 +33,7 @@ lease() {
 delete-lease() {
   echo "Gather pod logs before we delete lease"
   get-pod-logs
-  echo "Uninstalling ${WORKFLOW_CHART}"
+  echo "Uninstalling Workflow"
   kubectl delete namespace "deis" &> /dev/null
   echo "Deleting all test namespaces"
   kubectl get namespace | grep test | awk '{print $1}' | xargs kubectl delete namespace &> /dev/null

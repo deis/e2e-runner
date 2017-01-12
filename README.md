@@ -8,11 +8,11 @@ Docker image for running workflow-e2e
 E2e-runner coordinates the entire e2e run against a Workflow [chart](https://github.com/deis/charts/tree/master/workflow-dev), including:
 
   1. Coordinating the leasing of a GKE k8s cluster via [k8s-claimer](https://github.com/deis/k8s-claimer),
-  2. Cleaning up the leased cluster if need be (primarily deleting the `deis` namespace if still exists),
-  3. Setting up the local [helmc](https://github.com/helm/helm-classic) install on the leased cluster,
-  4. Generating and installing the Workflow and [Workflow-e2e](https://github.com/deis/charts/tree/master/workflow-dev-e2e) charts,
-  5. Monitoring to see when these charts are up and running,
-  6. Following and capturing chart logs and placing them where Jenkins/others can find them before deleting the cluster lease and exiting.
+  1. Cleaning up the leased cluster if need be (primarily deleting the `deis` namespace if still exists),
+  1. Setting up the local [helm](https://github.com/kubernetes/helm) install on the leased cluster (deleting the `tiller` deployment if necessary),
+  1. Installing the Workflow and [Workflow-e2e](https://github.com/deis/charts/tree/master/workflow-dev-e2e) charts (setting particular values if necessary),
+  1. Monitoring to see when these charts are up and running,
+  1. Following and capturing chart logs and placing them where Jenkins/others can find them before deleting the cluster lease and exiting.
 
 See the main [run](https://github.com/deis/e2e-runner/blob/master/scripts/run.sh) script for the basic outline of actions presented above.  It is a good entry point into the finer details of e2e-runner functionality.
 
@@ -39,8 +39,3 @@ $ docker run -e AUTH_TOKEN=$AUTH_TOKEN quay.io/deisci/e2e-runner
 * `AUTH_TOKEN` - Token needed to talk to [k8s claimer](https://github.com/deis/k8s-claimer)
 * `CLUSTER_DURATION` - How long to lease the k8s cluster (default: `800 seconds`)
 * `GINKGO_NODES` - How many nodes to use when running e2e tests in parallel (default: `30`)
-* `HELM_REMOTE_REPO` - Remote repo to use for fetching charts (default: `https://github.com/deis/charts.git`)
-* `WORKFLOW_BRANCH` - Which branch in `deis/charts` to checkout (default: `master`)
-* `WORKFLOW_E2E_BRANCH` - Which branch in `deis/charts` to checkout (default: `master`)
-* `WORKFLOW_CHART` - Which chart to use for installing [workflow](https:github.com/deis/workflow).
-* `WORKFLOW_E2E_CHART` - Which chart to use for installing [workflow-e2e](https:github.com/deis/workflow-e2e).

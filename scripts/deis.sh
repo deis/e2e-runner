@@ -40,7 +40,7 @@ deis_healthcheck() {
   local successes=0
   local failures=0
   local max_attempts=10
-  echo "Checking to see if the workflow has come up properly."
+  echo "Checking to see if Workflow has come up properly."
   while [[ ${successes} -lt "${max_attempts}" ]] && [[ ${failures} -lt "${max_attempts}" ]]; do
     wait-for-router
     if [ $? -eq 0 ]; then
