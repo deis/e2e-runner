@@ -4,7 +4,7 @@ ENV CLUSTER_DURATION=1600 \
 	KUBECONFIG=/home/jenkins/kubeconfig.yaml \
 	GINKGO_NODES=30 \
 	HELMC_HOME=/home/jenkins/.helmc \
-	K8S_VERSION=1.3.5
+	K8S_VERSION=1.5.1
 
 RUN addgroup --gid 999 jenkins && \
 	adduser --system \
