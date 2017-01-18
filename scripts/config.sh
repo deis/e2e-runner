@@ -12,12 +12,6 @@ export K8S_OBJECT_LOG="${DEIS_LOG_DIR}/k8s-objects.log"
 export DEIS_DESCRIBE="${DEIS_LOG_DIR}/deis-describe.log"
 export CLAIMER_URL="${CLAIMER_URL:-k8s-claimer.champagne.deis.com}"
 
-# helmc-remove
-export HELM_REMOTE_REPO="${HELM_REMOTE_REPO:-https://github.com/deis/charts.git}"
-export DEIS_CHART_HOME=$HELMC_HOME/cache/deis
-export WORKFLOW_BRANCH="${WORKFLOW_BRANCH:-master}"
-export WORKFLOW_E2E_BRANCH="${WORKFLOW_E2E_BRANCH:-master}"
-
 repos=(
   "BUILDER"
   "CONTROLLER"

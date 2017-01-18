@@ -2,18 +2,18 @@
 
 tail_logs_from_e2e_pod() {
   echo "Waiting for e2e pod to become ready"
-  wait-for-pod-ready "${WORKFLOW_E2E_CHART}"
-  kubectl logs -f --namespace=deis -c tests "${WORKFLOW_E2E_CHART}"
-  return-pod-exit-code "${WORKFLOW_E2E_CHART}"
+  wait-for-pod-ready workflow-e2e
+  kubectl logs -f --namespace=deis -c tests workflow-e2e
+  return-pod-exit-code workflow-e2e
   return $?
 }
 
 retrive-artifacts() {
   echo "Retrieving junit.xml from the artifacts sidecar container"
-  kubectl exec -c artifacts --namespace=deis "${WORKFLOW_E2E_CHART}" -- /bin/sh -c "find /root -name junit*.xml" > "${DEIS_LOG_DIR}/all-junit-files.out"
+  kubectl exec -c artifacts --namespace=deis workflow-e2e -- /bin/sh -c "find /root -name junit*.xml" > "${DEIS_LOG_DIR}/all-junit-files.out"
   while read -r file || [[ -n "${file}" ]]
   do
-    kubectl exec -c artifacts --namespace=deis "${WORKFLOW_E2E_CHART}" cat "${file}" > "${DEIS_LOG_DIR}/$(basename "$file")"
+    kubectl exec -c artifacts --namespace=deis workflow-e2e cat "${file}" > "${DEIS_LOG_DIR}/$(basename "$file")"
   done < "${DEIS_LOG_DIR}/all-junit-files.out"
 }
 
@@ -49,7 +49,7 @@ wait-for-pod-ready() {
 
     if [ ${waited_time} -ge ${timeout_secs} ]; then
       echo
-      echo "${WORKFLOW_E2E_CHART} was never ready. Test Container:${test_container_output} -- Artifact Container:${artifact_container_output}"
+      echo "workflow-e2e pod was never ready. Test Container:${test_container_output} -- Artifact Container:${artifact_container_output}"
       delete-lease
       exit 1
     fi

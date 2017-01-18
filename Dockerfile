@@ -21,8 +21,6 @@ RUN apt-get update -y && \
 	apt-get install -y \
 		git \
 		unzip && \
-	curl -s https://get.helm.sh | bash && \
-	mv helmc /usr/bin && \
 	curl -Ls -o /usr/bin/k8s-claimer https://storage.googleapis.com/k8s-claimer/git-e4dcc16/k8s-claimer-git-e4dcc16-linux-amd64 && \
 	chmod +x /usr/bin/k8s-claimer && \
 	curl -Ls -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v$K8S_VERSION/bin/linux/amd64/kubectl && \

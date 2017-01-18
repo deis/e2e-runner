@@ -69,7 +69,6 @@ teardown() {
 # delete lease
 
 @test "delete-lease" {
-  WORKFLOW_CHART=workflow-dev
   CLUSTER_NAME=cluzter
   TOKEN=foo
 
@@ -81,7 +80,7 @@ teardown() {
 
   [ "${status}" -eq 0 ]
   [ "${lines[0]}" == "Gather pod logs before we delete lease" ]
-  [ "${lines[1]}" == "Uninstalling ${WORKFLOW_CHART}" ]
+  [ "${lines[1]}" == "Uninstalling Workflow" ]
   [ "${lines[2]}" == "Deleting all test namespaces" ]
   [ "${lines[3]}" == "Deleting Lease for ${CLUSTER_NAME} -- ${TOKEN}" ]
 }
