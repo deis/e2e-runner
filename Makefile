@@ -14,16 +14,24 @@ SHELLCHECK_CMD := shellcheck -e SC1091 -e SC2002 scripts/*
 # -e SC1091 exempts `source relative/path/to/file` errors
 # -e SC2002 exempts `Useless cat. Consider 'cmd < file | ..' or 'cmd file | ..' instead.``
 TEST_ENV_PREFIX := docker run --rm -v ${CURDIR}:/bash -w /bash quay.io/deis/shell-dev
-
-build: docker-build
-push: docker-push
-run:
-	docker run -e AUTH_TOKEN="${AUTH_TOKEN}" \
+RUN_PREFIX := docker run -e AUTH_TOKEN="${AUTH_TOKEN}" \
 		-e CLI_VERSION="${CLI_VERSION}" \
 		-e CLUSTER_DURATION="${CLUSTER_DURATION}" \
 		-e CLUSTER_REGEX="${CLUSTER_REGEX}" \
 		-e CLUSTER_VERSION="${CLUSTER_VERSION}" \
-		-v "${E2E_DIR_LOGS}":/home/jenkins/logs:rw ${IMAGE}
+		-e JOB_NAME="${JOB_NAME}" \
+		-e BUILD_NUMBER="${BUILD_NUMBER}" \
+		-v "${E2E_DIR_LOGS}":/home/jenkins/logs:rw
+
+build: docker-build
+push: docker-push
+run:
+	${RUN_PREFIX} ${IMAGE}
+run-upgrade:
+	${RUN_PREFIX} \
+		-e RUN_E2E="${RUN_E2E}" \
+		-e ORIGIN_WORKFLOW_REPO="${ORIGIN_WORKFLOW_REPO}" \
+		-e UPGRADE_WORKFLOW_REPO="${UPGRADE_WORKFLOW_REPO}" ${IMAGE} ./run.sh upgrade
 
 docker-build:
 	docker build ${DOCKER_BUILD_FLAGS} -t ${IMAGE} .

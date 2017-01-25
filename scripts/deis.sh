@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# dump-logs dumps logs from all k8s resources in the deis namespace to a file
+# as well as printing out the image running in each pod
+dump-logs() {
+  echo "Running kubectl describe pods and piping the output to ${DEIS_DESCRIBE}"
+  kubectl describe ns,svc,pods,rc,daemonsets --namespace=deis > "${DEIS_DESCRIBE}" 2> /dev/null
+  print-out-running-images
+}
+
 # Check to see if deis is installed, if so uninstall it.
 clean_cluster() {
   kubectl get ns | grep -q deis
@@ -35,7 +43,9 @@ clean_cluster() {
   fi
 }
 
-deis_healthcheck() {
+deis-healthcheck() {
+  echo "Health check deis until it is completely up!"
+
   wait-for-all-pods "deis"
   local successes=0
   local failures=0
@@ -58,6 +68,8 @@ deis_healthcheck() {
     fi
     sleep 1
   done
+
+  echo "Use http://grafana.$(get-router-ip).nip.io/ to monitor the e2e run"
 }
 
 wait-for-all-pods() {
