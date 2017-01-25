@@ -26,7 +26,7 @@ run:
 		-v "${E2E_DIR_LOGS}":/home/jenkins/logs:rw ${IMAGE}
 
 docker-build:
-	docker build -t ${IMAGE} .
+	docker build ${DOCKER_BUILD_FLAGS} -t ${IMAGE} .
 	docker tag ${IMAGE} ${MUTABLE_IMAGE}
 
 docker-push: docker-immutable-push docker-mutable-push
