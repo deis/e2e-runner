@@ -146,3 +146,36 @@ get-pod-logs() {
     kubectl logs "${pod}" -p --namespace="${namespace}" >> "${DEIS_LOG_DIR}/${namespace}-${pod}-previous.log"
   done <<< "$pods"
 }
+
+download-deis-cli() {
+  local version="${1:-latest}"
+
+  # try multiple buckets for specific cli version
+  curl-cli-from-gcs-bucket "${version}" "workflow-cli-master" || \
+  curl-cli-from-gcs-bucket "${version}" "workflow-cli-pr" || \
+  curl-cli-from-gcs-bucket "${version}" "workflow-cli-release"
+  chmod +x deis
+  export PATH="${PWD}:${PATH}"
+}
+
+function curl-cli-from-gcs-bucket() {
+  local version="${1}"
+  local gcs_bucket="${2}"
+  local base_url="https://storage.googleapis.com/${gcs_bucket}"
+  local url
+
+  case "${version}" in
+    "latest" | "stable")
+      url="${base_url}"
+      ;;
+    *)
+      url="${base_url}/${version}"
+      ;;
+  esac
+  url="${url}/deis-${version}-linux-amd64"
+
+  # Download CLI, retry up to 5 times with 10 second delay between each
+  echo "Installing Workflow CLI version '${version}' via url '${url}'"
+  curl -f -sSL --show-error -I "${url}"
+  curl -f -sSL --show-error --retry 5 --retry-delay 10 -o deis "${url}"
+}

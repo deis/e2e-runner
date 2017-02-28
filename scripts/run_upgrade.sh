@@ -20,6 +20,27 @@ helm ls "${release}"
 
 dump-logs && deis-healthcheck
 
+# if off-cluster storage, create state
+if [ "${STORAGE_TYPE}" != "" ]; then
+  username='testuser'
+  password="$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 ;)"
+  email="${username}@example.com"
+
+  download-deis-cli
+  deis version
+
+  deis register deis."$(get-router-ip)".nip.io \
+    --username="${username}" --password="${password}" --email="${email}"
+
+  app="${username}-app"
+  deis create "${app}" --no-remote
+  deis pull deis/example-go -a "${app}"
+
+  if [[ $? -ne 0 ]]; then
+    exit $?
+  fi
+fi
+
 # Upgrade release
 echo "Upgrading release ${release} using the latest chart from the '${UPGRADE_WORKFLOW_REPO}' chart repo."
 # shellcheck disable=SC2046
@@ -30,6 +51,20 @@ dump-logs && deis-healthcheck
 
 # Sanity check
 kubectl get po --namespace deis
+
+# if off-cluster storage, check state
+if [ "${STORAGE_TYPE}" != "" ]; then
+  deis login deis."$(get-router-ip)".nip.io \
+    --username="${username}" --password="${password}"
+
+  deis apps:info -a "${app}"
+  deis apps:destroy -a "${app}" --confirm "${app}"
+  deis auth:cancel --username="${username}" --password="${password}" --yes
+
+  if [[ $? -ne 0 ]]; then
+    exit $?
+  fi
+fi
 
 if [ "${RUN_E2E}" == true ]; then
   # Add workflow-e2e chart repo and install chart
