@@ -14,7 +14,8 @@ done
 echo "Installing Workflow chart from the '${ORIGIN_WORKFLOW_REPO}' chart repo..."
 # shellcheck disable=SC2046
 helm install "${ORIGIN_WORKFLOW_REPO}"/workflow --namespace=deis \
-  $(set-chart-version workflow) $(set-chart-values workflow)
+  $(set-chart-version workflow) $(set-chart-values workflow) --set controller.registration_mode=enabled
+# TODO: remove this "registration_mode" override when e2e tests expect "admin_only" as the default
 release="$(helm ls --date --short | tail -n 1)"
 helm ls "${release}"
 
