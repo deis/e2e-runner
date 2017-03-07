@@ -7,7 +7,8 @@ helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
 
 # shellcheck disable=SC2046
 helm install "${chart_repo}"/workflow --namespace=deis \
-  $(set-chart-version workflow) $(set-chart-values workflow)
+  $(set-chart-version workflow) $(set-chart-values workflow) --set controller.registration_mode=enabled
+# TODO: remove this "registration_mode" override when e2e tests expect "admin_only" as the default
 
 dump-logs && deis-healthcheck
 
