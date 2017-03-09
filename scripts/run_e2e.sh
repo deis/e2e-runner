@@ -5,10 +5,11 @@ chart_repo="$(get-chart-repo workflow "${CHART_REPO_TYPE}")"
 echo "Adding workflow chart repo '${chart_repo}'"
 helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
 
-# shellcheck disable=SC2046
-helm install "${chart_repo}"/workflow --namespace=deis \
-  $(set-chart-version workflow) $(set-chart-values workflow) --set controller.registration_mode=enabled
+install_cmd="helm install ${chart_repo}/workflow --namespace=deis \
+$(set-chart-version workflow) --set controller.registration_mode=enabled $(set-chart-values workflow)"
 # TODO: remove this "registration_mode" override when e2e tests expect "admin_only" as the default
+# execute in subshell to print full command being run
+(set -x; eval "${install_cmd}")
 
 dump-logs && deis-healthcheck
 
@@ -17,9 +18,10 @@ chart_repo="$(get-chart-repo workflow-e2e "${CHART_REPO_TYPE}")"
 echo "Adding workflow-e2e chart repo '${chart_repo}'"
 helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
 
-# shellcheck disable=SC2046
-helm install "${chart_repo}"/workflow-e2e --namespace=deis \
-  $(set-chart-version workflow-e2e) $(set-chart-values workflow-e2e)
+install_cmd="helm install ${chart_repo}/workflow-e2e --namespace=deis \
+$(set-chart-version workflow-e2e) $(set-chart-values workflow-e2e)"
+# execute in subshell to print full command being run
+(set -x; eval "${install_cmd}")
 
 echo "Running kubectl describe pod workflow-e2e and piping the output to ${DEIS_DESCRIBE}"
 kubectl describe pod workflow-e2e --namespace=deis >> "${DEIS_DESCRIBE}" 2> /dev/null
