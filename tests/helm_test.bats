@@ -107,11 +107,28 @@ setup() {
   [ "${output}" == 'workflow' ]
 }
 
-@test "get-chart-repo : workflow staging" {
+@test "get-chart-repo : workflow staging, WORKFLOW_TAG empty" {
+  WORKFLOW_TAG=
   run get-chart-repo 'workflow' 'staging'
 
   [ "${status}" -eq 0 ]
   [ "${output}" == 'workflow-staging' ]
+}
+
+@test "get-chart-repo : workflow pr, WORKFLOW_TAG set" {
+  WORKFLOW_TAG=abc1234
+  run get-chart-repo 'workflow' 'pr'
+
+  [ "${status}" -eq 0 ]
+  [ "${output}" == 'workflow-pr' ]
+}
+
+@test "get-chart-repo : workflow pr, WORKFLOW_TAG empty" {
+  WORKFLOW_TAG=
+  run get-chart-repo 'workflow' 'pr'
+
+  [ "${status}" -eq 0 ]
+  [ "${output}" == 'workflow-dev' ]
 }
 
 @test "get-chart-repo : workflow-e2e staging" {
