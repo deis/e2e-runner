@@ -11,10 +11,12 @@ for chart_repo in ${chart_repos}; do
   helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
 done
 
-echo "Installing Workflow chart from the '${ORIGIN_WORKFLOW_REPO}' chart repo..."
-# shellcheck disable=SC2046
-helm install "${ORIGIN_WORKFLOW_REPO}"/workflow --namespace=deis \
-  $(set-chart-version workflow) $(set-chart-values workflow)
+install_cmd="helm install ${ORIGIN_WORKFLOW_REPO}/workflow --namespace=deis \
+$(set-chart-version workflow) $(set-chart-values workflow)"
+# execute in subshell to print full command being run
+(set -x; eval "${install_cmd}")
+
+# get release name
 release="$(helm ls --date --short | tail -n 1)"
 helm ls "${release}"
 
@@ -42,10 +44,12 @@ if [ "${STORAGE_TYPE}" != "" ]; then
 fi
 
 # Upgrade release
-echo "Upgrading release ${release} using the latest chart from the '${UPGRADE_WORKFLOW_REPO}' chart repo."
-# shellcheck disable=SC2046
-helm upgrade "${release}" "${UPGRADE_WORKFLOW_REPO}"/workflow $(set-chart-values workflow) --set controller.registration_mode=enabled
+upgrade_cmd="helm upgrade ${release} ${UPGRADE_WORKFLOW_REPO}/workflow \
+--set controller.registration_mode=enabled $(set-chart-values workflow)"
 # TODO: remove this "registration_mode" override when e2e tests expect "admin_only" as the default
+# execute in subshell to print full command being run
+(set -x; eval "${upgrade_cmd}")
+
 helm ls "${release}"
 
 dump-logs && deis-healthcheck
