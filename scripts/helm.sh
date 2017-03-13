@@ -64,6 +64,14 @@ function get-chart-repo {
     fi
   fi
 
+  if [ "${chart}" == 'workflow' ] && [ "${repo_type}" == 'pr' ]; then
+    # if repo type is pr but WORKFLOW_TAG is empty (specific chart version not specified)
+    # then pull latest from -dev repo for testing docker image PR artifact
+    if [ -z "${WORKFLOW_TAG}" ]; then
+      chart_repo="${chart}-dev"
+    fi
+  fi
+
   echo "${chart_repo}"
 }
 
