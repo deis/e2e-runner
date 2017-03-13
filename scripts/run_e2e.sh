@@ -5,20 +5,20 @@ chart_repo="$(get-chart-repo workflow "${CHART_REPO_TYPE}")"
 echo "Adding workflow chart repo '${chart_repo}'"
 helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
 
-install_cmd="helm install ${chart_repo}/workflow --namespace=deis \
+install_cmd="helm install --wait ${chart_repo}/workflow --namespace=deis \
 $(set-chart-version workflow) --set controller.registration_mode=enabled $(set-chart-values workflow)"
 # TODO: remove this "registration_mode" override when e2e tests expect "admin_only" as the default
 # execute in subshell to print full command being run
 (set -x; eval "${install_cmd}")
 
-dump-logs && deis-healthcheck
+dump-logs
 
 # Add workflow-e2e chart repo and install chart
 chart_repo="$(get-chart-repo workflow-e2e "${CHART_REPO_TYPE}")"
 echo "Adding workflow-e2e chart repo '${chart_repo}'"
 helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
 
-install_cmd="helm install ${chart_repo}/workflow-e2e --namespace=deis \
+install_cmd="helm install --wait ${chart_repo}/workflow-e2e --namespace=deis \
 $(set-chart-version workflow-e2e) $(set-chart-values workflow-e2e)"
 # execute in subshell to print full command being run
 (set -x; eval "${install_cmd}")
