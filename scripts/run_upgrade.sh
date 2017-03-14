@@ -45,7 +45,7 @@ fi
 
 # Upgrade release
 upgrade_cmd="helm upgrade --wait ${release} ${UPGRADE_WORKFLOW_REPO}/workflow \
---set controller.registration_mode=enabled $(set-chart-values workflow)"
+$(set-chart-values workflow)"
 # TODO: remove this "registration_mode" override when e2e tests expect "admin_only" as the default
 # execute in subshell to print full command being run
 (set -x; eval "${upgrade_cmd}")
