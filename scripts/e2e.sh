@@ -1,8 +1,6 @@
 #!/bin/bash
 
 tail_logs_from_e2e_pod() {
-  echo "Waiting for e2e pod to become ready"
-  wait-for-pod-ready workflow-e2e
   kubectl logs -f --namespace=deis -c tests workflow-e2e
   return-pod-exit-code workflow-e2e
   return $?
@@ -28,34 +26,6 @@ return-pod-exit-code() {
   exit_code="$(get-pod-output-json "${name}" | jq -r --arg container "tests" ".status.containerStatuses[] | select(.name==\$container) | .state.terminated.exitCode")"
 
   return "${exit_code}"
-}
-
-wait-for-pod-ready() {
-  local name="${1}"
-  local timeout_secs=30
-  local increment_secs=1
-  local waited_time=0
-
-  while [ ${waited_time} -lt ${timeout_secs} ]; do
-    test_container_output="$(kubectl get po "${name}" -a --namespace=deis -o json | jq -r --arg container "tests" ".status.containerStatuses[] | select(.name==\$container) | .ready")"
-    artifact_container_output="$(kubectl get po "${name}" -a --namespace=deis -o json | jq -r --arg container "artifacts" ".status.containerStatuses[] | select(.name==\$container) | .ready")"
-
-    if [ "${test_container_output}" == "true" ] && [ "${artifact_container_output}" == "true" ]; then
-      return 0
-    fi
-
-    sleep ${increment_secs}
-    (( waited_time += increment_secs ))
-
-    if [ ${waited_time} -ge ${timeout_secs} ]; then
-      echo
-      echo "workflow-e2e pod was never ready. Test Container:${test_container_output} -- Artifact Container:${artifact_container_output}"
-      delete-lease
-      exit 1
-    fi
-
-    echo -n . 1>&2
-  done
 }
 
 wait-for-container-terminated() {

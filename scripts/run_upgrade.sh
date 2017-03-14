@@ -11,7 +11,7 @@ for chart_repo in ${chart_repos}; do
   helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
 done
 
-install_cmd="helm install ${ORIGIN_WORKFLOW_REPO}/workflow --namespace=deis \
+install_cmd="helm install --wait ${ORIGIN_WORKFLOW_REPO}/workflow --namespace=deis \
 $(set-chart-version workflow) $(set-chart-values workflow)"
 # execute in subshell to print full command being run
 (set -x; eval "${install_cmd}")
@@ -20,7 +20,7 @@ $(set-chart-version workflow) $(set-chart-values workflow)"
 release="$(helm ls --date --short | tail -n 1)"
 helm ls "${release}"
 
-dump-logs && deis-healthcheck
+dump-logs
 
 # if off-cluster storage, create state
 if [ "${STORAGE_TYPE}" != "" ]; then
@@ -44,7 +44,7 @@ if [ "${STORAGE_TYPE}" != "" ]; then
 fi
 
 # Upgrade release
-upgrade_cmd="helm upgrade ${release} ${UPGRADE_WORKFLOW_REPO}/workflow \
+upgrade_cmd="helm upgrade --wait ${release} ${UPGRADE_WORKFLOW_REPO}/workflow \
 --set controller.registration_mode=enabled $(set-chart-values workflow)"
 # TODO: remove this "registration_mode" override when e2e tests expect "admin_only" as the default
 # execute in subshell to print full command being run
@@ -52,7 +52,7 @@ upgrade_cmd="helm upgrade ${release} ${UPGRADE_WORKFLOW_REPO}/workflow \
 
 helm ls "${release}"
 
-dump-logs && deis-healthcheck
+dump-logs
 
 # Sanity check
 kubectl get po --namespace deis
@@ -78,7 +78,7 @@ if [ "${RUN_E2E}" == true ]; then
   helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
 
   # shellcheck disable=SC2046
-  helm install "${chart_repo}"/workflow-e2e --namespace=deis \
+  helm install --wait "${chart_repo}"/workflow-e2e --namespace=deis \
     $(set-chart-version workflow-e2e) $(set-chart-values workflow-e2e)
 
   echo "Running kubectl describe pod workflow-e2e and piping the output to ${DEIS_DESCRIBE}"
