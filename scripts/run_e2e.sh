@@ -31,10 +31,12 @@ tail_logs_from_e2e_pod
 podExitCode=$?
 echo "Test pod exited with code:${podExitCode}"
 
-#Collect artifacts
+# Collect artifacts
 retrive-artifacts
 retrieveArtifactsExitCode=$?
 echo "Retrieving artifacts exited with code:${retrieveArtifactsExitCode}"
+
+delete-lease
 
 if [ "$podExitCode" -ne "0" ]; then
   echo "Received a non-zero exit code from the e2e test pod..."
