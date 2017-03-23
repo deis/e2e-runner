@@ -49,12 +49,7 @@ image:
 	export E2E_RUNNER_IMAGE=${IMAGE}
 
 test:
-	${SHELLCHECK_CMD}
-	${BATS_CMD}
-
-docker-test:
 	${TEST_ENV_PREFIX} ${SHELLCHECK_CMD}
 	${TEST_ENV_PREFIX} ${BATS_CMD}
 
-
-.PHONY: docker-build docker-push docker-immutable-push docker-mutable-push image test docker-test
+.PHONY: docker-build docker-push docker-immutable-push docker-mutable-push image test
