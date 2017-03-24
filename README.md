@@ -1,6 +1,7 @@
+# e2e-runner
+[![Build Status](https://ci.deis.io/job/e2e-runner/badge/icon)](https://ci.deis.io/job/e2e-runner)
 [![Docker Repository on Quay](https://quay.io/repository/deisci/e2e-runner/status "Docker Repository on Quay")](https://quay.io/repository/deisci/e2e-runner)
 
-# e2e-runner
 Docker image for running workflow-e2e
 
 ## Overview of use
