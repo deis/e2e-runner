@@ -15,6 +15,7 @@ SHELLCHECK_CMD := shellcheck -e SC1091 -e SC2002 scripts/*
 # -e SC2002 exempts `Useless cat. Consider 'cmd < file | ..' or 'cmd file | ..' instead.``
 TEST_ENV_PREFIX := docker run --rm -v ${CURDIR}:/bash -w /bash quay.io/deis/shell-dev
 RUN_PREFIX := docker run -e AUTH_TOKEN="${AUTH_TOKEN}" \
+		-e CLAIMER_URL="${CLAIMER_URL}" \
 		-e CLI_VERSION="${CLI_VERSION}" \
 		-e CLUSTER_DURATION="${CLUSTER_DURATION}" \
 		-e CLUSTER_REGEX="${CLUSTER_REGEX}" \
