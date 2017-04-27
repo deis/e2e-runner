@@ -10,8 +10,7 @@ dump-logs() {
 
 # Check to see if deis is installed, if so uninstall it.
 clean_cluster() {
-  kubectl get ns | grep -q deis
-  if [ $? -eq 0 ]; then
+  if kubectl get ns | grep -q deis; then
     echo "Deis was installed so I'm removing it!"
     kubectl delete ns "deis" &> /dev/null
 
@@ -21,8 +20,7 @@ clean_cluster() {
 
     echo "Waiting for namespace to go away!"
     while [ ${waited_time} -lt "${timeout_secs}" ]; do
-      kubectl get ns | grep -q deis
-      if [ $? -gt 0 ]; then
+      if ! kubectl get ns | grep -q deis; then
         echo
         return 0
       fi
