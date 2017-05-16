@@ -4,7 +4,7 @@ lease() {
   local tries=1
   local cluster_args
 
-  cluster_args="--duration ${CLUSTER_DURATION}"
+  cluster_args="--duration ${CLUSTER_DURATION} --provider=${CLOUD_PROVIDER}"
   if [ -n "${CLUSTER_REGEX}" ]; then
     cluster_args="${cluster_args} --cluster-regex ${CLUSTER_REGEX}"
   elif [ -n "${CLUSTER_VERSION}" ]; then
@@ -38,6 +38,6 @@ delete-lease() {
   echo "Deleting all test namespaces"
   kubectl get namespace | grep test | awk '{print $1}' | xargs kubectl delete namespace &> /dev/null
   echo "Deleting Lease for ${CLUSTER_NAME} -- ${TOKEN}"
-  k8s-claimer --server="${CLAIMER_URL}" lease delete "${TOKEN}"
+  k8s-claimer --server="${CLAIMER_URL}" lease delete "${TOKEN}" --provider="${CLOUD_PROVIDER}"
   return 0
 }

@@ -21,7 +21,7 @@ RUN apt-get update -y && \
 	apt-get install -y \
 		git \
 		unzip && \
-	curl -Ls -o /usr/bin/k8s-claimer https://storage.googleapis.com/k8s-claimer/git-e4dcc16/k8s-claimer-git-e4dcc16-linux-amd64 && \
+	curl -Ls -o /usr/bin/k8s-claimer https://k8sclaimercli.blob.core.windows.net/cli/git-4be346d/k8s-claimer-git-4be346d-linux-amd64 && \
 	chmod +x /usr/bin/k8s-claimer && \
 	curl -Ls -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v$K8S_VERSION/bin/linux/amd64/kubectl && \
 	chmod +x /usr/bin/kubectl && \

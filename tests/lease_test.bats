@@ -7,6 +7,7 @@ setup() {
 
   LEASE_RETRIES=2
   CLUSTER_DURATION=10
+  CLOUD_PROVIDER=azure
   LEASE_CREATE_OUTPUT="\
     export TOKEN=foo \
     export CLUSTER_NAME=cluzter \
@@ -25,7 +26,7 @@ teardown() {
   run lease
 
   [ "${status}" -eq 1 ]
-  [ "${lines[0]}" == "Requesting lease with: '--duration ${CLUSTER_DURATION}'" ]
+  [ "${lines[0]}" == "Requesting lease with: '--duration ${CLUSTER_DURATION} --provider=${CLOUD_PROVIDER}'" ]
   [ "${lines[1]}" == "Acquiring lease failed." ]
 }
 
@@ -33,7 +34,7 @@ teardown() {
   run lease
 
   [ "${status}" -eq 0 ]
-  [ "${lines[0]}" == "Requesting lease with: '--duration ${CLUSTER_DURATION}'" ]
+  [ "${lines[0]}" == "Requesting lease with: '--duration ${CLUSTER_DURATION} --provider=${CLOUD_PROVIDER}'" ]
   [ "${lines[1]}" == "Leased cluster 'cluzter' for ${CLUSTER_DURATION} seconds" ]
   [ "${lines[2]}" == "TOKEN: foo" ]
 }
@@ -44,7 +45,7 @@ teardown() {
   run lease
 
   [ "${status}" -eq 0 ]
-  [ "${lines[0]}" == "Requesting lease with: '--duration ${CLUSTER_DURATION} --cluster-regex ${CLUSTER_REGEX}'" ]
+  [ "${lines[0]}" == "Requesting lease with: '--duration ${CLUSTER_DURATION} --provider=${CLOUD_PROVIDER} --cluster-regex ${CLUSTER_REGEX}'" ]
 }
 
 @test "lease : (create) cluster args - duration and cluster version" {
@@ -53,7 +54,7 @@ teardown() {
   run lease
 
   [ "${status}" -eq 0 ]
-  [ "${lines[0]}" == "Requesting lease with: '--duration ${CLUSTER_DURATION} --cluster-version ${CLUSTER_VERSION}'" ]
+  [ "${lines[0]}" == "Requesting lease with: '--duration ${CLUSTER_DURATION} --provider=${CLOUD_PROVIDER} --cluster-version ${CLUSTER_VERSION}'" ]
 }
 
 @test "lease : (create) cluster args - duration, cluster regex and cluster version (cluster regex wins)" {
@@ -63,7 +64,7 @@ teardown() {
   run lease
 
   [ "${status}" -eq 0 ]
-  [ "${lines[0]}" == "Requesting lease with: '--duration ${CLUSTER_DURATION} --cluster-regex ${CLUSTER_REGEX}'" ]
+  [ "${lines[0]}" == "Requesting lease with: '--duration ${CLUSTER_DURATION} --provider=${CLOUD_PROVIDER} --cluster-regex ${CLUSTER_REGEX}'" ]
 }
 
 # delete lease
