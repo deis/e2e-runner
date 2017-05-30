@@ -169,6 +169,10 @@ function set-chart-values {
     done
   fi
 
+  if [ "${chart}" == "workflow" ]; then
+    values_to_set="$(append-value "global.use_rbac=${USE_RBAC}" "${values_to_set}")"
+  fi
+
   if [ -n "${values_to_set}" ]; then
     echo "--set ${values_to_set}"
   fi

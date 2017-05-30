@@ -8,6 +8,8 @@ MUTABLE_IMAGE := ${DEIS_REGISTRY}${IMAGE_PREFIX}/${SHORT_NAME}:canary
 CLI_VERSION ?= latest
 E2E_DIR_LOGS ?= ${PWD}/logs
 CLUSTER_DURATION ?= 1600
+CLOUD_PROVIDER ?= azure
+USE_RBAC ?= false
 
 BATS_CMD := bats --tap tests
 SHELLCHECK_CMD := shellcheck -e SC1091 -e SC2002 scripts/*
@@ -17,11 +19,14 @@ TEST_ENV_PREFIX := docker run --rm -v ${CURDIR}:/bash -w /bash quay.io/deis/shel
 RUN_PREFIX := docker run -e AUTH_TOKEN="${AUTH_TOKEN}" \
 		-e CLAIMER_URL="${CLAIMER_URL}" \
 		-e CLI_VERSION="${CLI_VERSION}" \
+		-e CLOUD_PROVIDER="${CLOUD_PROVIDER}" \
 		-e CLUSTER_DURATION="${CLUSTER_DURATION}" \
 		-e CLUSTER_REGEX="${CLUSTER_REGEX}" \
 		-e CLUSTER_VERSION="${CLUSTER_VERSION}" \
+		-e HELM_VERSION="${HELM_VERSION}" \
 		-e JOB_NAME="${JOB_NAME}" \
 		-e BUILD_NUMBER="${BUILD_NUMBER}" \
+		-e USE_RBAC="${USE_RBAC}" \
 		-v "${E2E_DIR_LOGS}":/home/jenkins/logs:rw
 
 build: docker-build
