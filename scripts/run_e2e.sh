@@ -7,9 +7,10 @@ helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
 
 install_cmd="helm install --wait ${chart_repo}/workflow --namespace=deis \
 $(set-chart-version workflow) $(set-chart-values workflow)"
-# TODO: remove this "registration_mode" override when e2e tests expect "admin_only" as the default
 # execute in subshell to print full command being run
-(set -x; eval "${install_cmd}")
+if ! (set -x; eval "${install_cmd}"); then
+  exit 1
+fi
 
 dump-logs
 
@@ -21,7 +22,9 @@ helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
 install_cmd="helm install --wait ${chart_repo}/workflow-e2e --namespace=deis \
 $(set-chart-version workflow-e2e) $(set-chart-values workflow-e2e)"
 # execute in subshell to print full command being run
-(set -x; eval "${install_cmd}")
+if ! (set -x; eval "${install_cmd}"); then
+  exit 1
+fi
 
 echo "Running kubectl describe pod workflow-e2e and piping the output to ${DEIS_DESCRIBE}"
 kubectl describe pod workflow-e2e --namespace=deis >> "${DEIS_DESCRIBE}" 2> /dev/null
@@ -35,8 +38,6 @@ echo "Test pod exited with code:${podExitCode}"
 retrive-artifacts
 retrieveArtifactsExitCode=$?
 echo "Retrieving artifacts exited with code:${retrieveArtifactsExitCode}"
-
-delete-lease
 
 if [ "$podExitCode" -ne "0" ]; then
   echo "Received a non-zero exit code from the e2e test pod..."

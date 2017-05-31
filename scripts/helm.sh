@@ -37,7 +37,6 @@ wait-for-tiller-pod-ready() {
     if [ ${waited_time} -ge ${timeout_secs} ]; then
       echo
       echo "${name} was never ready."
-      delete-lease
       exit 1
     fi
 

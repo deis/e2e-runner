@@ -49,7 +49,6 @@ wait-for-container-terminated() {
     if [ ${waited_time} -ge ${timeout_secs} ]; then
       echo
       echo "'${container_name}' container never terminated. Last status was '${container_status}'."
-      delete-lease
       exit 1
     fi
 
