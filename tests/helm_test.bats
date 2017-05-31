@@ -2,6 +2,8 @@
 
 setup() {
   . "${BATS_TEST_DIRNAME}/../scripts/helm.sh"
+
+  USE_RBAC=false
 }
 
 @test "set-chart-version : none in env" {
@@ -41,7 +43,7 @@ setup() {
   run set-chart-values workflow
 
   [ "${status}" -eq 0 ]
-  [ "${output}" == "--set database.docker_tag=git-abc1234" ]
+  [ "${output}" == "--set database.docker_tag=git-abc1234,global.use_rbac=false" ]
 }
 
 @test "set-chart-values : workflow, multiple in env" {
@@ -52,7 +54,7 @@ setup() {
   run set-chart-values workflow
 
   [ "${status}" -eq 0 ]
-  [ "${output}" == "--set nsqd.docker_tag=git-def5678,database.docker_tag=git-abc1234,controller.docker_tag=git-ghi9123" ]
+  [ "${output}" == "--set nsqd.docker_tag=git-def5678,database.docker_tag=git-abc1234,controller.docker_tag=git-ghi9123,global.use_rbac=false" ]
 }
 
 @test "set-chart-values : workflow, storage type (gcs)" {
@@ -65,7 +67,7 @@ setup() {
   run set-chart-values workflow
 
   [ "${status}" -eq 0 ]
-  [ "${output}" == "--set global.storage=gcs,gcs.key_json=gcskey,gcs.builder_bucket=builder-bucket,gcs.database_bucket=database-bucket,gcs.registry_bucket=registry-bucket" ]
+  [ "${output}" == "--set global.storage=gcs,gcs.key_json=gcskey,gcs.builder_bucket=builder-bucket,gcs.database_bucket=database-bucket,gcs.registry_bucket=registry-bucket,global.use_rbac=false" ]
 }
 
 @test "set-chart-values : workflow, storage type (s3) and component shas" {
@@ -81,7 +83,7 @@ setup() {
   run set-chart-values workflow
 
   [ "${status}" -eq 0 ]
-  [ "${output}" == "--set nsqd.docker_tag=git-def5678,database.docker_tag=git-abc1234,global.storage=s3,s3.accesskey=aws_access_key,s3.secretkey=aws_secret_key,s3.builder_bucket=builder-bucket,s3.database_bucket=database-bucket,s3.registry_bucket=registry-bucket" ]
+  [ "${output}" == "--set nsqd.docker_tag=git-def5678,database.docker_tag=git-abc1234,global.storage=s3,s3.accesskey=aws_access_key,s3.secretkey=aws_secret_key,s3.builder_bucket=builder-bucket,s3.database_bucket=database-bucket,s3.registry_bucket=registry-bucket,global.use_rbac=false" ]
 }
 
 @test "set-chart-values : workflow-e2e" {
