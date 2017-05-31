@@ -14,7 +14,9 @@ done
 install_cmd="helm install --wait ${ORIGIN_WORKFLOW_REPO}/workflow --namespace=deis \
 $(set-chart-version workflow) $(set-chart-values workflow)"
 # execute in subshell to print full command being run
-(set -x; eval "${install_cmd}")
+if ! (set -x; eval "${install_cmd}"); then
+  exit 1
+fi
 
 # get release name
 release="$(helm ls --date --short | tail -n 1)"
@@ -45,9 +47,10 @@ fi
 # Upgrade release
 upgrade_cmd="helm upgrade --wait ${release} ${UPGRADE_WORKFLOW_REPO}/workflow \
 $(set-chart-values workflow)"
-# TODO: remove this "registration_mode" override when e2e tests expect "admin_only" as the default
 # execute in subshell to print full command being run
-(set -x; eval "${upgrade_cmd}")
+if ! (set -x; eval "${upgrade_cmd}"); then
+  exit 1
+fi
 
 helm ls "${release}"
 
