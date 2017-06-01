@@ -11,7 +11,7 @@ for chart_repo in ${chart_repos}; do
   helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
 done
 
-install_cmd="helm install --wait ${ORIGIN_WORKFLOW_REPO}/workflow --namespace=deis \
+install_cmd="helm install --wait --devel ${ORIGIN_WORKFLOW_REPO}/workflow --namespace=deis \
 $(set-chart-version workflow) $(set-chart-values workflow)"
 # execute in subshell to print full command being run
 if ! (set -x; eval "${install_cmd}"); then
@@ -45,7 +45,7 @@ if [ "${STORAGE_TYPE}" != "" ]; then
 fi
 
 # Upgrade release
-upgrade_cmd="helm upgrade --wait ${release} ${UPGRADE_WORKFLOW_REPO}/workflow \
+upgrade_cmd="helm upgrade --wait --devel ${release} ${UPGRADE_WORKFLOW_REPO}/workflow \
 $(set-chart-values workflow)"
 # execute in subshell to print full command being run
 if ! (set -x; eval "${upgrade_cmd}"); then
@@ -79,7 +79,7 @@ if [ "${RUN_E2E}" == true ]; then
   helm repo add "${chart_repo}" https://charts.deis.com/"${chart_repo}"
 
   # shellcheck disable=SC2046
-  helm install --wait "${chart_repo}"/workflow-e2e --namespace=deis \
+  helm install --wait --devel "${chart_repo}"/workflow-e2e --namespace=deis \
     $(set-chart-version workflow-e2e) $(set-chart-values workflow-e2e)
 
   echo "Running kubectl describe pod workflow-e2e and piping the output to ${DEIS_DESCRIBE}"
