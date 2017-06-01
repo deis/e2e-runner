@@ -40,7 +40,7 @@ if [ "${STORAGE_TYPE}" != "" ]; then
   deis create "${app}" --no-remote
 
   if ! deis pull deis/example-go -a "${app}"; then
-    exit $?
+    exit 1
   fi
 fi
 
@@ -68,7 +68,7 @@ if [ "${STORAGE_TYPE}" != "" ]; then
   deis apps:destroy -a "${app}" --confirm "${app}"
 
   if ! deis auth:cancel --username="${username}" --password="${password}" --yes; then
-    exit $?
+    exit 1
   fi
 fi
 

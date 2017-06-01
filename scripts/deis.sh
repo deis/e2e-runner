@@ -8,6 +8,13 @@ dump-logs() {
   print-out-running-images
 }
 
+get-router-ip() {
+  command_output="$(kubectl --namespace=deis get svc deis-router -o json | jq -r ".status.loadBalancer.ingress[0].ip")"
+  if [ ! -z "${command_output}" ] && [ "${command_output}" != "null" ]; then
+    echo "${command_output}"
+  fi
+}
+
 # Check to see if deis is installed, if so uninstall it.
 clean_cluster() {
   if kubectl get ns | grep -q deis; then
